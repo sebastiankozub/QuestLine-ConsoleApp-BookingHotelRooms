@@ -1,27 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ConsoleBookingApp;
+﻿namespace ConsoleBookingApp;
 
 internal class BookingAppConsoleArgsParser
 {
     private readonly string[] _args;
 
+    private readonly string _hotelsArgsSwitch;
+    private readonly string _bookingsArgsSwitch;
+
     public BookingAppConsoleArgsParser(BookingAppConsoleArgsParserOptions options)
     {
-        if(options.args == null || options.args.Length < 4)
+        if (options.args == null || options.args.Length < 4)
             throw new ArgumentException("Command line arguments not satisfied. Run app with proper --bookings and --hotels parameters' values.");
 
         _args = options.args;
+
+        _hotelsArgsSwitch = "hotels";
+        _bookingsArgsSwitch = "bookings";
     }
+
 
     public (string HotelsFilename, string BookingsFilname) Parse()
     {
-        var hotelRepositoryFilename = GetParameterValue("hotels");
-        var bookingRepositoryFilename = GetParameterValue("bookings");
+        var hotelRepositoryFilename = GetParameterValue(_hotelsArgsSwitch);
+        var bookingRepositoryFilename = GetParameterValue(_bookingsArgsSwitch);
 
         if (hotelRepositoryFilename is null || bookingRepositoryFilename is null)
             throw new ArgumentException("One or more underlying datafile names not given properly.");
@@ -37,7 +38,7 @@ internal class BookingAppConsoleArgsParser
             return _args[index + 1];
 
         return null;
-    }    
+    }
 }
 
 internal class BookingAppConsoleArgsParserOptions

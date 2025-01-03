@@ -174,3 +174,26 @@
 //        }
 //    }
 //}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//UserInterfaceOptions userInterfaceOptions = new();
+//configuration.GetSection(UserInterfaceOptions.UserInterfaceSegmentName).Bind(userInterfaceOptions);
+//services.ConfigureOptions<UserInterfaceOptions>(configuration.GetSection(UserInterfaceOptions.UserInterfaceSegmentName));
+//services.Configure<UserInterfaceOptions>(configuration.GetSection(UserInterfaceOptions.UserInterfaceSegmentName));
+//services.AddOptionsWithValidateOnStart<UserInterfaceOptions>(UserInterfaceOptions.UserInterfaceSegmentName);
+//
+//var section = configuration.GetSection(MyFirstClass.MyFirstClassOptionsSegmentName);
+//services.Configure<MyFirstClass>(section);

@@ -17,13 +17,12 @@ internal class ConsoleBookingAppEntry
             // ENVIRONMENT VARIABLES
             var appEnvironment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
 
-            // JSON FILES APP CONFIGURATION
+            // JSON CONFIG FILES
             var configBuilder = new ConfigurationBuilder();
-
             configBuilder
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("config.json", optional: false)
-                .AddJsonFile($"config.{appEnvironment}.json", optional: true);
+                .AddJsonFile($"config.{appEnvironment}.json", optional: false);
 
             var configuration = configBuilder.Build();
 
@@ -31,69 +30,48 @@ internal class ConsoleBookingAppEntry
             var services = new ServiceCollection()
                 .AddSingleton<IConfigurationRoot>(configuration)
                 .AddSingleton<ICommandLineParser, CommandLineParser>()
-                .AddSingleton<CommandLineProcessor>();
+                .AddSingleton<CommandLineProcessor>()
+                .AddSingleton(sp => { 
+                    var options = new BookingAppConsoleArgsParserOptions { args = args }; 
+                    return options; 
+                });
 
-            services.AddSingleton(sp => { 
-                var options = new BookingAppConsoleArgsParserOptions { args = args }; 
-                return options; 
-            });
+            services
+                .AddSingleton<BookingAppConsoleArgsParser>()
+                .AddSingleton(sp => {
+                    var consoleArgsParser = sp.GetRequiredService<BookingAppConsoleArgsParser>();
+                    var (hotelsFilename, bookingsFilname) = consoleArgsParser.Parse();
+                    var dataContext = new DataContext(hotelsFilename, bookingsFilname);
+                    return dataContext;
+                });
 
-            services.AddSingleton<BookingAppConsoleArgsParser>();
-
-            services.AddSingleton(sp => {
-                var consoleArgsParser = sp.GetRequiredService<BookingAppConsoleArgsParser>();
-                var (hotelsFilename, bookingsFilname) = consoleArgsParser.Parse();
-                var dc = new DataContext(hotelsFilename, bookingsFilname);
-                return dc;
-            });
-
-            var comandLineHandlers = typeof(ConsoleBookingAppEntry).Assembly.GetTypes()
+            var commandLineHandlers = typeof(ConsoleBookingAppEntry).Assembly.GetTypes()
                 .Where(x => !x.IsAbstract && x.IsClass && x.GetInterface(nameof(ICommandLineHandler)) == typeof(ICommandLineHandler));
-
-            foreach (var commandLineHandler in comandLineHandlers)
-            {
+            foreach (var commandLineHandler in commandLineHandlers)            
                 services.Add(new ServiceDescriptor(typeof(ICommandLineHandler), commandLineHandler, ServiceLifetime.Singleton));
-            }
+            
+            services
+                .AddSingleton(sp => sp.GetServices<ICommandLineHandler>().ToDictionary(h => h.CommandName))
+                .AddSingleton<BookingAppConsoleInterface>();
 
-            services.AddSingleton(sp => sp.GetServices<ICommandLineHandler>().ToDictionary(h => h.CommandName));
-            services.AddSingleton<BookingAppConsoleInterface>();
-
-
-            // REGISTER IOptions
-            services.AddOptions();
-
+            // IOptions & configuration pocos
             var myFirstClass = configuration.GetSection(MyFirstClass.MyFirstClassOptionsSegmentName).Get<MyFirstClass>();
             if (myFirstClass is not null)
-                services.AddSingleton < MyFirstClass>(myFirstClass);
+                services.AddSingleton<MyFirstClass>(myFirstClass);
+
             var mySecondClass = configuration.GetSection(SecondOptions.SecondOptionsSegmentName).Get<SecondOptions>();
             if (mySecondClass is not null)
                 services.AddSingleton<SecondOptions>(mySecondClass);
 
             services.AddOptions<UserInterfaceOptions>()
-                .Bind(configuration.GetSection("MyOptions"))
+                .Bind(configuration.GetSection(UserInterfaceOptions.UserInterfaceSegmentName))
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
 
-            UserInterfaceOptions userInterfaceOptions = new();
-            configuration.GetSection(UserInterfaceOptions.UserInterfaceSegmentName).Bind(userInterfaceOptions);
-            services.ConfigureOptions<UserInterfaceOptions>(configuration.GetSection(UserInterfaceOptions.UserInterfaceSegmentName));
-            services.Configure<UserInterfaceOptions>(configuration.GetSection(UserInterfaceOptions.UserInterfaceSegmentName));
-
-            services.AddOptionsWithValidateOnStart<UserInterfaceOptions>(UserInterfaceOptions.UserInterfaceSegmentName);
-
-            //
-
-            var section = configuration.GetSection(MyFirstClass.MyFirstClassOptionsSegmentName);
-            services.Configure<MyFirstClass>(section);
-
-
-
             var serviceProvider = services.BuildServiceProvider();
 
-
-
             // DATA LAYER INITIALIZATION                     
-            var dataContext = serviceProvider.GetRequiredService<DataContext>();
+            var dataContext = serviceProvider.GetRequiredService<DataContext>();  // check -> NuGet/HostInitActions 
             await dataContext.Initialization;
 
             // RUN
@@ -102,7 +80,7 @@ internal class ConsoleBookingAppEntry
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Fatal error during application run.\nProblem detail:\n{ex.Message}");
+            Console.WriteLine($"Fatal or non-servicable exception during application run.\nProblem detail:\n{ex.Message}");
         }
     }
 
@@ -114,43 +92,43 @@ internal class ConsoleBookingAppEntry
 
 public class MyFirstClass
 {
-    public static string MyFirstClassOptionsSegmentName = "FirstOptions";
+    public const string MyFirstClassOptionsSegmentName = "FirstOptions";
 
-    public string Option1 { get; set; }
+    public required string Option1 { get; set; }
     public int Option2 { get; set; }
 }
 
 public class SecondOptions
 {
-    public static string SecondOptionsSegmentName = "SecondOptions";
+    public const string SecondOptionsSegmentName = "SecondOptions";
 
-    public string SettingOne { get; set; }
+    public required string SettingOne { get; set; }
     public int SettingTwo { get; set; }
 }
 
 public class UserInterfaceOptions
 {
-    public static string UserInterfaceSegmentName = "UserInterface";
+    public const string UserInterfaceSegmentName = "UserInterface";
 
     [Required]
-    [MinLength(5)]
-    public string HelpCommand { get; set; }
+    [MinLength(3)]
+    public required string HelpCommand { get; set; }
 
     [Required]
-    [MinLength(5)]
-    public string ExitCommand { get; set; }
+    [MinLength(3)]
+    public required string ExitCommand { get; set; }
 
     [Required]
-    [MinLength(5)]
-    public string SearchCommand { get; set; }
+    [MinLength(3)]
+    public required string SearchCommand { get; set; }
 
     [Required]
-    [MinLength(5)]
-    public string AvailabilityCommand { get; set; }
+    [MinLength(3)]
+    public required string AvailabilityCommand { get; set; }
 
     [Required]
-    [MinLength(5)]
-    public string CommandPrompt { get; set; }
+    [MinLength(1)]
+    public required string CommandPrompt { get; set; }
 }
 
 
