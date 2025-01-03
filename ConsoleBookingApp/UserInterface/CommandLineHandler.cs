@@ -16,14 +16,9 @@ public class CommandLineHandlerResult
     public Action? PostResultAction { get; set; }
 }
 
-public class AvailabilityCommandLineHandler : ICommandLineHandler
+public class AvailabilityCommandLineHandler(DataContext dataContext) : ICommandLineHandler
 {
-    private readonly DataContext _dataContext;
-
-    public AvailabilityCommandLineHandler(DataContext dataContext)
-    {
-        _dataContext = dataContext;
-    }
+    private readonly DataContext _dataContext = dataContext;
 
     public string CommandName => "Availability";
 
@@ -63,14 +58,9 @@ public class AvailabilityCommandLineHandler : ICommandLineHandler
 }
 
 
-public class SearchCommandLineHandler : ICommandLineHandler
+public class SearchCommandLineHandler(DataContext dataContext) : ICommandLineHandler
 {
-    private readonly DataContext _dataContext;
-
-    public SearchCommandLineHandler(DataContext dataContext)
-    {
-        _dataContext = dataContext;
-    }
+    private readonly DataContext _dataContext = dataContext;
 
     public string CommandName => "Search";
 

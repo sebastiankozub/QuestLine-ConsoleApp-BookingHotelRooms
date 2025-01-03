@@ -1,7 +1,6 @@
 ﻿using ConsoleBookingApp.Configuration;
-using ConsoleBookingApp.UserInterfacepublic;
+using ConsoleBookingApp.UserInterface;
 using Microsoft.Extensions.Options;
-using System.Text;
 
 namespace ConsoleBookingApp.UserInterface;
 
@@ -10,8 +9,8 @@ public class CommandLineProcessor
     private readonly ICommandLineParser _parser;
     private readonly Dictionary<string, ICommandLineHandler> _commandLineHandlers;
 
-    private readonly string _helpCommandName;
-    private readonly string _exitCommandName;
+    private readonly string _helpCommand;
+    private readonly string _exitCommand;
 
     private readonly UserInterfaceOptions _uiOptions;
     private readonly UserInterfaceCommandsOptions _uiCommandsOptions;
@@ -28,8 +27,8 @@ public class CommandLineProcessor
         _uiOptions = userInterfaceOptions.Value;
         _uiCommandsOptions = userInterfaceCommandsOptions.Value;
 
-        _helpCommandName = _uiCommandsOptions.Help ?? nameof(UserInterfaceCommandsOptions.Help);
-        _exitCommandName = _uiCommandsOptions.Exit ?? nameof(UserInterfaceCommandsOptions.Exit);
+        _helpCommand = _uiCommandsOptions.Help ?? nameof(UserInterfaceCommandsOptions.Help);
+        _exitCommand = _uiCommandsOptions.Exit ?? nameof(UserInterfaceCommandsOptions.Exit);
 
         _first = first;
         _second = second;
@@ -38,20 +37,21 @@ public class CommandLineProcessor
     public async Task<CommandLineProcessorResult> ProcessCommandAsync(string commandLine)  
     {
         if(string.IsNullOrEmpty(commandLine))        
-            return new EmptyCommandLineProcessorResult();
+            return new EmptyCommandLineProcessorResult(_helpCommand);
         
         var (givenCommand, givenParameters) = _parser.Parse(commandLine);
 
         if (givenCommand == null)        
-            return new InvalidFormatCommandLineProcessorResult(_helpCommandName);        
+            return new InvalidFormatCommandLineProcessorResult(_helpCommand);        
 
-        if (givenCommand == _helpCommandName)        
+        if (givenCommand == _helpCommand)        
             return new HelpCommandLineProcessorResult(_commandLineHandlers);
         
-        if (givenCommand == _exitCommandName)        
+        if (givenCommand == _exitCommand)        
             return new ExitCommandLineProcessorResult(givenCommand);
 
-        // TODO create and use AliasResolver
+        // TODO refactor to use CommandLineAliasResolver
+        // given command or alias Resolve return default command string  - null reference warning also cleaned then
         if ((IsAlias(givenCommand, out var commandFromAlias) && _commandLineHandlers.TryGetValue(commandFromAlias, out var commandLineHandler))
             || _commandLineHandlers.TryGetValue(givenCommand, out commandLineHandler))  
         {
@@ -69,7 +69,7 @@ public class CommandLineProcessor
     }
     
     private bool IsAlias(string alias, out string? defaultCommand)   
-                    // TODO refactor to use CommandLineAliasResolver - given command or alias return default command
+                    // TODO refactor to use CommandLineAliasResolver - given command or alias Resolve return default command string
     {
         var aliasFound = false;
         defaultCommand = null;

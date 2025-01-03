@@ -13,8 +13,8 @@
     "CommandsAliases": {
       /*"Help": "Help",
       "Exit": "Exit",
-      "Search": "Search",*/
-      "Availability": "Availa"
+      "Search": "Search",
+      "Availability": "Availa"*/
     },
     "CommandPrompt": ">>"
   },

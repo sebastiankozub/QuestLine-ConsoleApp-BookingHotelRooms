@@ -1,11 +1,7 @@
 ﻿using ConsoleBookingApp.UserInterface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace ConsoleBookingApp.UserInterfacepublic;
+namespace ConsoleBookingApp.UserInterface;
 
 public class CommandLineProcessorResult
 {
@@ -16,10 +12,10 @@ public class CommandLineProcessorResult
 
 public class EmptyCommandLineProcessorResult : CommandLineProcessorResult
 {
-    public EmptyCommandLineProcessorResult()
+    public EmptyCommandLineProcessorResult(string helpCommand)
     {
         Success = false;
-        Message = "Empty command. Try Help() to check for existing commands.";
+        Message = $"Empty command. Try {helpCommand}() to check for existing commands.";
         PostProcess = null;
     }
 }
