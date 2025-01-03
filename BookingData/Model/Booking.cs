@@ -1,7 +1,7 @@
-﻿using ConsoleBookingApp.FrameworkExtensions;
+﻿using BookingUtils.FrameworkExtensions;
 using System.Text.Json.Serialization;
 
-namespace ConsoleBookingApp.Data.Model;
+namespace BookingData.Model;
 
 public class Booking
 {

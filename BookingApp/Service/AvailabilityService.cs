@@ -1,23 +1,19 @@
-﻿using ConsoleBookingApp.Data;
+﻿using BookingData;
 
-namespace ConsoleBookingApp.Core.Service;
+namespace BookingApp.Service;
 
-public class AvailabilityService : IAvailabilityService
+public class AvailabilityService : BookingAppService, IAvailabilityService
 {
-    private readonly DataContext _dataContext;
-
-    public AvailabilityService(DataContext dataContext)
-    {
-        _dataContext = dataContext;
-    }
+    public AvailabilityService(DataContext dataContext) : base(dataContext) { }
 
     public IEnumerable<AvaialabilityResult> GetAvailability(string hotelId, (DateOnly from, DateOnly to) availabilityPerdiod, string roomType)
     {
+        var b = _dataContext.Bookings;
         return new List<AvaialabilityResult>();
     }
 }
 
-interface IAvailabilityService : IBookingService
+interface IAvailabilityService
 {
     // Availability(H1,         20240901, SGL)  - one day
     // Availability(H1, 20240901-20240903, DBL)   - period

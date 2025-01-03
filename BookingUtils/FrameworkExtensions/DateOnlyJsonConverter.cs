@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using System.Text.Json;
 
-namespace ConsoleBookingApp.FrameworkExtensions;
+namespace BookingUtils.FrameworkExtensions;
 
 public class DateOnlyJsonConverter : JsonConverter<DateOnly>
 {

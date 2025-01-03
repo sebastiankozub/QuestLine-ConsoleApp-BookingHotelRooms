@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace ConsoleBookingApp.Data.Model;
+namespace BookingData.Model;
 
 public class Room
 {

@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using ConsoleBookingApp.Data.Model;
+using BookingData.Model;
 
-namespace ConsoleBookingApp.Data;
+namespace BookingData;
 
 public class DataContext
 {
@@ -48,7 +48,7 @@ public class DataContext
         //var fs = File.OpenRead(_bookingRepositoryFilename);
     }
 
-    private JsonSerializerOptions JsonDataFileSerializerOptions()
+    private static JsonSerializerOptions JsonDataFileSerializerOptions()
     {
         return new JsonSerializerOptions
         {

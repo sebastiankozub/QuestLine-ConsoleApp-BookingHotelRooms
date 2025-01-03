@@ -1,5 +1,5 @@
-﻿using ConsoleBookingApp.Configuration;
-using ConsoleBookingApp.Core.CommandHandler;
+﻿using ConsoleBookingApp.CommandHandler;
+using ConsoleBookingApp.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace ConsoleBookingApp.UserInterface;
@@ -52,10 +52,10 @@ public class CommandLineProcessor
 
         // TODO refactor to use CommandLineAliasResolver better BookingAppAliasResolver : IAliasResolver
         // given command or alias Resolve() return default command string  - null reference warning also cleaned then
-        if ((IsAlias(givenCommand, out var commandFromAlias) && _commandLineHandlers.TryGetValue(commandFromAlias, out var commandLineHandler))
-            || _commandLineHandlers.TryGetValue(givenCommand, out commandLineHandler))  
+        if ((IsAlias(givenCommand, out var commandFromAlias) && _commandLineHandlers.TryGetValue(commandFromAlias, out var commandHandler))
+            || _commandLineHandlers.TryGetValue(givenCommand, out commandHandler))  
         {
-            var commandResult = await commandLineHandler.HandleAsync(givenParameters);
+            var commandResult = await commandHandler.HandleAsync(givenParameters);
 
             return new CommandLineProcessorResult
             {

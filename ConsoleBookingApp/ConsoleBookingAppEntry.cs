@@ -1,9 +1,9 @@
-using ConsoleBookingApp.Data;
 using Microsoft.Extensions.DependencyInjection;
 using ConsoleBookingApp.UserInterface;
 using Microsoft.Extensions.Configuration;
 using ConsoleBookingApp.Configuration;
-using ConsoleBookingApp.Core.CommandHandler;
+using ConsoleBookingApp.CommandHandler;
+using BookingData;
 
 namespace ConsoleBookingApp;
 

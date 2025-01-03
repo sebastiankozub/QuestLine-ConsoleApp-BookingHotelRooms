@@ -1,4 +1,4 @@
-﻿namespace ConsoleBookingApp.Core.CommandHandler;
+﻿namespace ConsoleBookingApp.CommandHandler;
 
 public class CommandHandlerData
 {

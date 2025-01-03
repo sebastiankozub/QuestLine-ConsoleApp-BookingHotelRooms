@@ -47,12 +47,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BookingApp\BookingApp.csproj" />
+    <ProjectReference Include="..\BookingData\BookingData.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="bookings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="hotels.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\" />
   </ItemGroup>
 
 </Project>

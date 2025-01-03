@@ -13,7 +13,7 @@ Layered Architecture:
 
 There is room (or need) for more layers - for example:
 1. JsonFileDataStorage - implementuing abstraction above data storage IDataStorage to be used by DataContext: Save() and Inititialize()
-2. CommandLineReader put between CommandLineProcessor and BookingAppConsoleInterface resolve some mix in User Interface layer
+2. CommandLineReader put between CommandLineProcessor and BookingAppConsoleInterface resolve some mix in User Interface layer -> spliting ui view and logic
 
 TODO MUST-TO:
 -------------

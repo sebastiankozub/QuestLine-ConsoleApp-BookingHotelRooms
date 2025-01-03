@@ -1,5 +1,5 @@
 ﻿using ConsoleBookingApp.Configuration;
-using ConsoleBookingApp.Data;
+using BookingData;
 using Microsoft.Extensions.Options;
 
 namespace ConsoleBookingApp.UserInterface;

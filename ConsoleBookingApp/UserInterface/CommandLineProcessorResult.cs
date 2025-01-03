@@ -1,4 +1,4 @@
-﻿using ConsoleBookingApp.Core.CommandHandler;
+﻿using ConsoleBookingApp.CommandHandler;
 using System.Text;
 
 namespace ConsoleBookingApp.UserInterface;

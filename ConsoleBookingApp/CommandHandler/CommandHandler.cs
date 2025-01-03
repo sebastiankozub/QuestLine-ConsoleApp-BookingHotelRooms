@@ -2,17 +2,16 @@
 // In the ICommandHandler interface command simply stands for user executed action
 // left as it is for now - refactor when more functionalities mixing query and command handlers will be added
 
-using ConsoleBookingApp.Data;
+using BookingData;
 using System.Text;
 
-namespace ConsoleBookingApp.Core.CommandHandler;
+namespace ConsoleBookingApp.CommandHandler;
 
 public interface ICommandHandler
 {
     Task<CommandHandlerResult> HandleAsync(string[] parameters);
     string CommandName { get; }
 }
-
 
 
 public class AvailabilityCommandHandler(DataContext dataContext) : ICommandHandler
