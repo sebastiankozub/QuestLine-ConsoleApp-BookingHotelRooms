@@ -1,0 +1,22 @@
+{
+
+  "FirstOptions": {
+    "Option1": "some string value",
+    "Option2": 42
+  },
+
+  "SecondOptions": {
+    "SettingOne": "some string value",
+    "SettingTwo": 42
+  },
+
+  "UserInterface": {
+    "HelpCommand": "Hel",
+    "ExitCommand": "Exi",
+    "SearchCommand": "Sea",
+    "AvailabilityCommand": "Ava",
+    "CommandPrompt" : ">>"
+  }
+
+}
+

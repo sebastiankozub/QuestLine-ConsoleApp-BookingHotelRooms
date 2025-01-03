@@ -1,0 +1,11 @@
+{
+  "MyFirstClass": {
+    "Option1": "some string value",
+    "Option2": 42
+  },
+  "MySecondClass": {
+    "SettingOne": "some string value",
+    "SettingTwo": 42
+  }
+}
+

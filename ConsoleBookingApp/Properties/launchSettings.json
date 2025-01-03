@@ -1,0 +1,20 @@
+{
+  "profiles": {
+
+    "ConsoleBookingApp": {
+      "commandName": "Project",
+      "commandLineArgs": " sfsd --wer ",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "dev"
+      }
+    },
+
+    "ConsoleBookingApp-With-Args": {
+      "commandName": "Project",
+      "commandLineArgs": " --hotels hotels.json --bookings bookings.json   ",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "dev"
+      }
+    }
+  }
+}
