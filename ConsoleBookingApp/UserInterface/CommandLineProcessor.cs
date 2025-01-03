@@ -1,4 +1,5 @@
 ﻿using ConsoleBookingApp.Configuration;
+using ConsoleBookingApp.UserInterfacepublic;
 using Microsoft.Extensions.Options;
 using System.Text;
 
@@ -8,109 +9,85 @@ public class CommandLineProcessor
 {
     private readonly ICommandLineParser _parser;
     private readonly Dictionary<string, ICommandLineHandler> _commandLineHandlers;
+
     private readonly string _helpCommandName;
     private readonly string _exitCommandName;
+
     private readonly UserInterfaceOptions _uiOptions;
+    private readonly UserInterfaceCommandsOptions _uiCommandsOptions;
 
     //test only
     private readonly MyFirstClass _first;
     private readonly SecondOptions _second;
 
-    public CommandLineProcessor(ICommandLineParser parser, Dictionary<string, ICommandLineHandler> handlers, IOptions<UserInterfaceOptions> userInterfaceOptions, MyFirstClass first, SecondOptions second)
+    public CommandLineProcessor(ICommandLineParser parser, Dictionary<string, ICommandLineHandler> handlers, IOptions<UserInterfaceOptions> userInterfaceOptions, IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions, MyFirstClass first, SecondOptions second)
     {
         _parser = parser;
         _commandLineHandlers = handlers;
 
         _uiOptions = userInterfaceOptions.Value;
+        _uiCommandsOptions = userInterfaceCommandsOptions.Value;
 
-        _helpCommandName = _uiOptions.CommandsAliases?.Help ?? nameof(UserInterfaceOptions.CommandsAliases.Help);
-        _exitCommandName = _uiOptions.CommandsAliases?.Exit ?? nameof(UserInterfaceOptions.CommandsAliases.Exit);
+        _helpCommandName = _uiCommandsOptions.Help ?? nameof(UserInterfaceCommandsOptions.Help);
+        _exitCommandName = _uiCommandsOptions.Exit ?? nameof(UserInterfaceCommandsOptions.Exit);
 
         _first = first;
         _second = second;
     }
 
-    public async Task<CommandLineProcessorResult> ProcessCommandAsync(string commandLine)
+    public async Task<CommandLineProcessorResult> ProcessCommandAsync(string commandLine)  
     {
-        if(string.IsNullOrEmpty(commandLine))
-        {
-            return new CommandLineProcessorResult
-            {
-                Message = $"Empty command. Try {_helpCommandName}() to check for existing commands.",
-                Success = false,
-                PostResultAction = null
-            };
-        }
+        if(string.IsNullOrEmpty(commandLine))        
+            return new EmptyCommandLineProcessorResult();
+        
+        var (givenCommand, givenParameters) = _parser.Parse(commandLine);
 
-        var (commandName, parameters) = _parser.Parse(commandLine);
+        if (givenCommand == null)        
+            return new InvalidFormatCommandLineProcessorResult(_helpCommandName);        
 
-        if (commandName == null)
-        {
-            return new CommandLineProcessorResult
-            {
-                Message = $"Invalid command format. Mind even empty parameters list command has to end with round brackets. Try {_helpCommandName}() to check for existing commands.",
-                Success = false,
-                PostResultAction = null
-            };                       
-        }
+        if (givenCommand == _helpCommandName)        
+            return new HelpCommandLineProcessorResult(_commandLineHandlers);
+        
+        if (givenCommand == _exitCommandName)        
+            return new ExitCommandLineProcessorResult(givenCommand);
 
-        if (commandName == _helpCommandName)
+        // TODO create and use AliasResolver
+        if ((IsAlias(givenCommand, out var commandFromAlias) && _commandLineHandlers.TryGetValue(commandFromAlias, out var commandLineHandler))
+            || _commandLineHandlers.TryGetValue(givenCommand, out commandLineHandler))  
         {
-            return new CommandLineProcessorResult
-            {
-                Message = BuildHelpInfo(),
-                Success = true,
-                PostResultAction = null
-            };
-        }
-
-        if (commandName == _exitCommandName)
-        {
-            return new CommandLineProcessorResult
-            {
-                Message = $"{_exitCommandName}() command received. Exiting application...",
-                Success = true,
-                PostResultAction = () => ConsoleBookingAppEntry.ExitApplication(0)
-            };
-        }
-
-        if (_commandLineHandlers.TryGetValue(commandName, out var commandLineHandler))
-        {
-            var commandResult = await commandLineHandler.HandleAsync(parameters);
+            var commandResult = await commandLineHandler.HandleAsync(givenParameters);
 
             return new CommandLineProcessorResult
             {
                 Message = commandResult.Message,
                 Success = true,
-                PostResultAction = null
+                PostProcess = null
             };
         }
-        else
-        {
-            return new CommandLineProcessorResult
-            {
-                Message = $"Command '{commandName}()' not found. Try {_helpCommandName}() to check for existing commands.",
-                Success = false,
-                PostResultAction = () => Environment.Exit(0)
-            };
-        }
+        else        
+            return new NotFoundCommandLineProcessorResult(givenCommand);        
     }
     
-    private string BuildHelpInfo()
+    private bool IsAlias(string alias, out string? defaultCommand)   
+                    // TODO refactor to use CommandLineAliasResolver - given command or alias return default command
     {
-        var sb = new StringBuilder();
-        sb.AppendLine("Available commands:");
+        var aliasFound = false;
+        defaultCommand = null;
 
-        foreach (var handler in _commandLineHandlers)
-            sb.AppendLine($"{handler.Value.CommandName}()");
+        if (_uiCommandsOptions.Search == alias)
+        {
+            defaultCommand = "Search";
+            aliasFound = true;
+        }
 
-        return sb.ToString();
+        if (_uiCommandsOptions.Availability == alias)
+        {
+            defaultCommand = "Availability";
+            aliasFound = true;
+        }
+
+        return aliasFound;
     }
 }
 
-public class CommandLineProcessorResult
-{
-    public bool Success { get; set; }
-    public required string Message { get; set; }
-    public Action? PostResultAction { get; set; }
-}
+

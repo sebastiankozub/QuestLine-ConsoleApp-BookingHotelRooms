@@ -1,20 +1,30 @@
 {
   "FirstOptions": {
     /*"Option1": null,*/
-    "Option2": 42
+    "Option2": 421
   },
 
   "SecondOptions": {
     "SettingOne": "some string value",
-    "SettingTwo": 42
+    "SettingTwo": 842
   },
 
   "UserInterface": {
     "CommandsAliases": {
       /*"Help": "Help",
       "Exit": "Exit",
-      "Search": "Search",
-      "Availability": "Availability"*/
+      "Search": "Search",*/
+      "Availability": "Availa"
+    },
+    "CommandPrompt": ">>"
+  },
+
+  "UserCommands": {
+    "CommandsAliases": {
+      /*"Help": "Help",
+      "Exit": "Exit",
+      "Search": "Search",*/
+      "Availability": "Availa"
     },
     "CommandPrompt": ">>"
   }

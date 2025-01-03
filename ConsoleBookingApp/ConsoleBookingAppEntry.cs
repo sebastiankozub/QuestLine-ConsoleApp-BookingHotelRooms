@@ -56,16 +56,21 @@ internal class ConsoleBookingAppEntry
                 .AddSingleton<BookingAppConsoleInterface>();
 
             // IOptions & configuration pocos
-            var myFirstClass = configuration.GetSection(MyFirstClass.MyFirstClassOptionsSegmentName).Get<MyFirstClass>();
+            var myFirstClass = configuration.GetSection(MyFirstClass.MyFirstClassSegmentName).Get<MyFirstClass>();
             if (myFirstClass is not null)
                 services.AddSingleton<MyFirstClass>(myFirstClass);
 
-            var mySecondClass = configuration.GetSection(SecondOptions.SecondOptionsSegmentName).Get<SecondOptions>();
+            var mySecondClass = configuration.GetSection(SecondOptions.SecondSegmentName).Get<SecondOptions>();
             if (mySecondClass is not null)
                 services.AddSingleton<SecondOptions>(mySecondClass);
 
             services.AddOptions<UserInterfaceOptions>()
                 .Bind(configuration.GetSection(UserInterfaceOptions.UserInterfaceSegmentName))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+
+            services.AddOptions<UserInterfaceCommandsOptions>()
+                .Bind(configuration.GetSection(UserInterfaceCommandsOptions.CommandsSegmentName))
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
 

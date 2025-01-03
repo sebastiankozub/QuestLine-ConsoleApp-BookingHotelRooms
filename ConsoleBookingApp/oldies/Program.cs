@@ -192,8 +192,8 @@
 //UserInterfaceOptions userInterfaceOptions = new();
 //configuration.GetSection(UserInterfaceOptions.UserInterfaceSegmentName).Bind(userInterfaceOptions);
 //services.ConfigureOptions<UserInterfaceOptions>(configuration.GetSection(UserInterfaceOptions.UserInterfaceSegmentName));
-//services.Configure<UserInterfaceOptions>(configuration.GetSection(UserInterfaceOptions.UserInterfaceSegmentName));
+//services.Configure<UserInterfaceOptions>(configuration.GetSection(UserInterfaceOptions.UserInterfaceSegmentName)).ValidateDataAnnotations();
 //services.AddOptionsWithValidateOnStart<UserInterfaceOptions>(UserInterfaceOptions.UserInterfaceSegmentName);
 //
-//var section = configuration.GetSection(MyFirstClass.MyFirstClassOptionsSegmentName);
+//var section = configuration.GetSection(MyFirstClass.MyFirstClassSegmentName);
 //services.Configure<MyFirstClass>(section);
