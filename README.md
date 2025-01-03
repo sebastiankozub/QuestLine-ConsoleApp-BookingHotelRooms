@@ -1,22 +1,30 @@
-﻿ReadMe
-------
+﻿Console application for booking a hotel room
+--------------------------------------------
+
+used to create and test nice & reusable console app framework library
+
 
 Architecture
 ------------
 
 Layered Architecture:
-1. Data
-2. Business Logic
-3. Command Handler - connecting view with business logic - at some point splited into command & query cqrs for cleaner code
-4. Command Line Processor
-5. User Interface - at the moment mixed view and entry point logic - 
+1. Data - should be splitted and data persistance logic extracted to IDataStorage interface and JsonFileDataStorage class
+2. Business Logic - use data layer to fulfill business needs
+3. Command Handler - connecting ui with business logic - eg. chaging data format between ui and core logic - at some point splited into command & query cqrs for cleaner code of data transformation
+4. Command Line Processor - parsing command line input and triggering command handler or returning to User Interface
+5. User Interface - at the moment to strongly mixed views geneartion with ui logic and and app entry point logic - to refactoring
 
 There is room (or need) for more layers - for example:
 1. JsonFileDataStorage - implementuing abstraction above data storage IDataStorage to be used by DataContext: Save() and Inititialize()
-2. CommandLineReader put between CommandLineProcessor and BookingAppConsoleInterface resolve some mix in User Interface layer -> spliting ui view and logic
+2. CommandLineReader put between BookingAppConsoleInterface and CommandLineProcessor - resolve mix in User Interface layer -> spliting ui views geneartion and app logic
+3. EntryPoint, Configuration, DI - split the responsibilities more & move some to class library projects to avoid dependencies eg. registering extension method AddDataContext()
+
+
 
 TODO MUST-TO:
 -------------
+
+0! Business logic in services & unit testing of the methods
 
 1. CommandLineHandlers:
 - change to ICommandHandler - in this layer code cannot have anything common with comman line console
@@ -31,6 +39,8 @@ TODO MUST-TO:
 - finish command alias mechanism
 
 4. make some classes cleaner & more compact - add unit testing
+
+
 
 
 
