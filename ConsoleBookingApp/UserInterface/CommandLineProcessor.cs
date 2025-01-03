@@ -50,8 +50,8 @@ public class CommandLineProcessor
         if (givenCommand == _exitCommand)        
             return new ExitCommandLineProcessorResult(givenCommand);
 
-        // TODO refactor to use CommandLineAliasResolver
-        // given command or alias Resolve return default command string  - null reference warning also cleaned then
+        // TODO refactor to use CommandLineAliasResolver better BookingAppAliasResolver : IAliasResolver
+        // given command or alias Resolve() return default command string  - null reference warning also cleaned then
         if ((IsAlias(givenCommand, out var commandFromAlias) && _commandLineHandlers.TryGetValue(commandFromAlias, out var commandLineHandler))
             || _commandLineHandlers.TryGetValue(givenCommand, out commandLineHandler))  
         {

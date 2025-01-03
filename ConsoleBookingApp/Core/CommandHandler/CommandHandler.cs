@@ -96,15 +96,3 @@ public class SearchCommandHandler(DataContext dataContext) : ICommandHandler
         return new CommandHandlerResult { Success = true, Message = sb.ToString() };
     }
 }
-
-//public class ExitCommandLineHandler : ICommandHandler
-//{
-//    public string CommandName => "Exit";
-
-//    public async Task<CommandLineHandlerResult> HandleAsync(string[] parameters)
-//    {        
-//        await Task.Run(() => Environment.Exit(0));
-//        return new CommandLineHandlerResult { Success = true, Message = "Exiting application..." };
-//    }
-//}
-
