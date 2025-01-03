@@ -1,18 +1,19 @@
 ﻿namespace ConsoleBookingApp.UserInterface;
 
-internal class ConsoleAppArgsParser
+internal class ConsoleAppArgsParser   // auxilly to strongly conneted to BookingApp logic to have such generic name
+                                      // with the current name should be generic class paramerized with or using BookingConsoleAppArgsParserOptions/
 {
     private readonly string[] _args;
 
     private readonly string _hotelsArgsSwitch;
     private readonly string _bookingsArgsSwitch;
 
-    public ConsoleAppArgsParser(ConsoleAppArgsParserOptions options)
+    public ConsoleAppArgsParser(ConsoleAppArgs runCommandArgs)
     {
-        if (options.args == null || options.args.Length < 4)
+        if (runCommandArgs.args == null || runCommandArgs.args.Length < 4)
             throw new ArgumentException("Command line arguments not satisfied. Run app with proper --bookings and --hotels parameters' values.");
 
-        _args = options.args;
+        _args = runCommandArgs.args;
 
         _hotelsArgsSwitch = "hotels";
         _bookingsArgsSwitch = "bookings";
@@ -40,7 +41,7 @@ internal class ConsoleAppArgsParser
     }
 }
 
-internal class ConsoleAppArgsParserOptions
+internal class ConsoleAppArgs
 {
     public string[] args = [];
 }

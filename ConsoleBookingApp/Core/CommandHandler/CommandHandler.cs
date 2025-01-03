@@ -1,7 +1,11 @@
-﻿using ConsoleBookingApp.Data;
+﻿// Using CQRS convention most of ICommandHandler implementations are not command but query handlers
+// In the ICommandHandler interface command simply stands for user executed action
+// left as it is for now - refactor when more functionalities mixing query and command handlers will be added
+
+using ConsoleBookingApp.Data;
 using System.Text;
 
-namespace ConsoleBookingApp.Core;
+namespace ConsoleBookingApp.Core.CommandHandler;
 
 public interface ICommandHandler
 {
@@ -9,12 +13,7 @@ public interface ICommandHandler
     string CommandName { get; }
 }
 
-public class CommandHandlerResult
-{
-    public bool Success { get; set; }
-    public required string Message { get; set; }
-    public Action? PostResultAction { get; set; }
-}
+
 
 public class AvailabilityCommandHandler(DataContext dataContext) : ICommandHandler
 {

@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ConsoleBookingApp.UserInterface;
 using Microsoft.Extensions.Configuration;
 using ConsoleBookingApp.Configuration;
-using ConsoleBookingApp.Core;
+using ConsoleBookingApp.Core.CommandHandler;
 
 namespace ConsoleBookingApp;
 
@@ -31,7 +31,7 @@ internal class ConsoleBookingAppEntry
                 .AddSingleton<ICommandLineParser, CommandLineParser>()
                 .AddSingleton<CommandLineProcessor>()
                 .AddSingleton(sp => { 
-                    var options = new ConsoleAppArgsParserOptions { args = args }; 
+                    var options = new ConsoleAppArgs { args = args }; 
                     return options; 
                 });
 
