@@ -5,7 +5,8 @@ namespace ConsoleBookingApp.Data;
 
 public class DataContext
 {
-    public List<Hotel> Hotels { get; private set; } = [];
+    // when introduced JsonFileDataStorage List<> will be changed into generic repository - to handle save to underlying storage
+    public List<Hotel> Hotels { get; private set; } = [];  
     public List<Booking> Bookings { get; private set; } = [];
 
     public DataContext(string hotelRepositoryFilename, string bookingRepositoryFilename)

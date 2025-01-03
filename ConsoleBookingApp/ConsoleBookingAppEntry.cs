@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ConsoleBookingApp.UserInterface;
 using Microsoft.Extensions.Configuration;
 using ConsoleBookingApp.Configuration;
+using ConsoleBookingApp.Core;
 
 namespace ConsoleBookingApp;
 
@@ -30,29 +31,29 @@ internal class ConsoleBookingAppEntry
                 .AddSingleton<ICommandLineParser, CommandLineParser>()
                 .AddSingleton<CommandLineProcessor>()
                 .AddSingleton(sp => { 
-                    var options = new BookingAppConsoleArgsParserOptions { args = args }; 
+                    var options = new ConsoleAppArgsParserOptions { args = args }; 
                     return options; 
                 });
 
             services
-                .AddSingleton<BookingAppConsoleArgsParser>()
+                .AddSingleton<ConsoleAppArgsParser>()
                 .AddSingleton(sp => {
-                    var consoleArgsParser = sp.GetRequiredService<BookingAppConsoleArgsParser>();
+                    var consoleArgsParser = sp.GetRequiredService<ConsoleAppArgsParser>();
                     var (hotelsFilename, bookingsFilname) = consoleArgsParser.Parse();
                     var dataContext = new DataContext(hotelsFilename, bookingsFilname);
                     return dataContext;
                 });
 
             var commandLineHandlers = typeof(ConsoleBookingAppEntry).Assembly.GetTypes()
-                .Where(x => !x.IsAbstract && x.IsClass && x.GetInterface(nameof(ICommandLineHandler)) == typeof(ICommandLineHandler));
+                .Where(x => !x.IsAbstract && x.IsClass && x.GetInterface(nameof(ICommandHandler)) == typeof(ICommandHandler));
             foreach (var commandLineHandler in commandLineHandlers)            
-                services.Add(new ServiceDescriptor(typeof(ICommandLineHandler), commandLineHandler, ServiceLifetime.Singleton));
+                services.Add(new ServiceDescriptor(typeof(ICommandHandler), commandLineHandler, ServiceLifetime.Singleton));
             
             services
-                .AddSingleton(sp => sp.GetServices<ICommandLineHandler>().ToDictionary(h => h.CommandName))
-                .AddSingleton<BookingAppConsoleInterface>();
+                .AddSingleton(sp => sp.GetServices<ICommandHandler>().ToDictionary(h => h.CommandName))
+                .AddSingleton<ConsoleAppInterface>();
 
-            // IOptions & configuration pocos
+            // OPTIONS PATTERN & CONFIGURATION POCOS
             var myFirstClass = configuration.GetSection(MyFirstClass.MyFirstClassSegmentName).Get<MyFirstClass>();
             if (myFirstClass is not null)
                 services.AddSingleton<MyFirstClass>(myFirstClass);
@@ -74,11 +75,11 @@ internal class ConsoleBookingAppEntry
             var serviceProvider = services.BuildServiceProvider();
 
             // DATA LAYER INITIALIZATION                     
-            var dataContext = serviceProvider.GetRequiredService<DataContext>();  // check -> NuGet/HostInitActions 
+            var dataContext = serviceProvider.GetRequiredService<DataContext>();  // check NuGet/HostInitActions for asyncronous initialization
             await dataContext.Initialization;
 
             // RUN
-            var consoleAppInterface = serviceProvider.GetRequiredService<BookingAppConsoleInterface>();
+            var consoleAppInterface = serviceProvider.GetRequiredService<ConsoleAppInterface>();
             await consoleAppInterface.RunInterfaceAsync();
         }
         catch (Exception ex)

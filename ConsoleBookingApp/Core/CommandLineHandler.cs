@@ -1,28 +1,28 @@
 ﻿using ConsoleBookingApp.Data;
 using System.Text;
 
-namespace ConsoleBookingApp.UserInterface;
+namespace ConsoleBookingApp.Core;
 
-public interface ICommandLineHandler
+public interface ICommandHandler
 {
-    Task<CommandLineHandlerResult> HandleAsync(string[] parameters);
+    Task<CommandHandlerResult> HandleAsync(string[] parameters);
     string CommandName { get; }
 }
 
-public class CommandLineHandlerResult
+public class CommandHandlerResult
 {
     public bool Success { get; set; }
     public required string Message { get; set; }
     public Action? PostResultAction { get; set; }
 }
 
-public class AvailabilityCommandLineHandler(DataContext dataContext) : ICommandLineHandler
+public class AvailabilityCommandHandler(DataContext dataContext) : ICommandHandler
 {
     private readonly DataContext _dataContext = dataContext;
 
     public string CommandName => "Availability";
 
-    public async Task<CommandLineHandlerResult> HandleAsync(string[] parameters)
+    public async Task<CommandHandlerResult> HandleAsync(string[] parameters)
     {
         await Task.Delay(333);
 
@@ -53,18 +53,17 @@ public class AvailabilityCommandLineHandler(DataContext dataContext) : ICommandL
             sb.AppendLine($"{b.HotelId} {b.RoomType}");
         }
 
-        return new CommandLineHandlerResult { Success = true, Message = sb.ToString() };
+        return new CommandHandlerResult { Success = true, Message = sb.ToString() };
     }
 }
 
-
-public class SearchCommandLineHandler(DataContext dataContext) : ICommandLineHandler
+public class SearchCommandHandler(DataContext dataContext) : ICommandHandler
 {
     private readonly DataContext _dataContext = dataContext;
 
     public string CommandName => "Search";
 
-    public async Task<CommandLineHandlerResult> HandleAsync(string[] parameters)
+    public async Task<CommandHandlerResult> HandleAsync(string[] parameters)
     {
         await Task.Delay(333);
 
@@ -95,11 +94,11 @@ public class SearchCommandLineHandler(DataContext dataContext) : ICommandLineHan
             sb.AppendLine($"{b.HotelId} {b.RoomType}");
         }
 
-        return new CommandLineHandlerResult { Success = true, Message = sb.ToString() };
+        return new CommandHandlerResult { Success = true, Message = sb.ToString() };
     }
 }
 
-//public class ExitCommandLineHandler : ICommandLineHandler
+//public class ExitCommandLineHandler : ICommandHandler
 //{
 //    public string CommandName => "Exit";
 

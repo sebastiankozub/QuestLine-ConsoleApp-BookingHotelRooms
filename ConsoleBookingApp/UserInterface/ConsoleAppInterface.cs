@@ -1,11 +1,10 @@
 ﻿using ConsoleBookingApp.Configuration;
 using ConsoleBookingApp.Data;
-using ConsoleBookingApp.UserInterface;
 using Microsoft.Extensions.Options;
 
-namespace ConsoleBookingApp;
+namespace ConsoleBookingApp.UserInterface;
 
-internal class BookingAppConsoleInterface(CommandLineProcessor processor, DataContext dataCtx, IOptions<UserInterfaceOptions> userInterfaceOptions, IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions)
+internal class ConsoleAppInterface(CommandLineProcessor processor, DataContext dataCtx, IOptions<UserInterfaceOptions> userInterfaceOptions, IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions)
 {
     private readonly CommandLineProcessor _cmdLineProcessor = processor;
     private readonly DataContext _dataContext = dataCtx;
@@ -19,7 +18,7 @@ internal class BookingAppConsoleInterface(CommandLineProcessor processor, DataCo
         while (true)
         {
             Console.WriteLine("CONSOLE BOOKING APP");
-            Console.WriteLine($"Type {_helpCommandName}() for quick help or use favorite known command!");  
+            Console.WriteLine($"Type {_helpCommandName}() for quick help or use favorite known command!");
             Console.WriteLine();
             Console.Write(_userInterfaceOptions.CommandPrompt);  // TODO abstract to different place Console class calls - ones like above and below
 
@@ -35,7 +34,7 @@ internal class BookingAppConsoleInterface(CommandLineProcessor processor, DataCo
 
 
             if (commandLineProcessorResult.PostProcess is not null)
-                commandLineProcessorResult.PostProcess();        
+                commandLineProcessorResult.PostProcess();
         }
     }
 }

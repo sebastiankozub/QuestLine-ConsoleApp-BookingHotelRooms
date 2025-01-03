@@ -1,5 +1,5 @@
 ﻿using ConsoleBookingApp.Configuration;
-using ConsoleBookingApp.UserInterface;
+using ConsoleBookingApp.Core;
 using Microsoft.Extensions.Options;
 
 namespace ConsoleBookingApp.UserInterface;
@@ -7,7 +7,7 @@ namespace ConsoleBookingApp.UserInterface;
 public class CommandLineProcessor
 {
     private readonly ICommandLineParser _parser;
-    private readonly Dictionary<string, ICommandLineHandler> _commandLineHandlers;
+    private readonly Dictionary<string, ICommandHandler> _commandLineHandlers;
 
     private readonly string _helpCommand;
     private readonly string _exitCommand;
@@ -19,7 +19,7 @@ public class CommandLineProcessor
     private readonly MyFirstClass _first;
     private readonly SecondOptions _second;
 
-    public CommandLineProcessor(ICommandLineParser parser, Dictionary<string, ICommandLineHandler> handlers, IOptions<UserInterfaceOptions> userInterfaceOptions, IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions, MyFirstClass first, SecondOptions second)
+    public CommandLineProcessor(ICommandLineParser parser, Dictionary<string, ICommandHandler> handlers, IOptions<UserInterfaceOptions> userInterfaceOptions, IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions, MyFirstClass first, SecondOptions second)
     {
         _parser = parser;
         _commandLineHandlers = handlers;

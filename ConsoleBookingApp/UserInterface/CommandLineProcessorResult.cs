@@ -1,4 +1,4 @@
-﻿using ConsoleBookingApp.UserInterface;
+﻿using ConsoleBookingApp.Core;
 using System.Text;
 
 namespace ConsoleBookingApp.UserInterface;
@@ -32,9 +32,9 @@ public class NotFoundCommandLineProcessorResult : CommandLineProcessorResult
 
 public class HelpCommandLineProcessorResult : CommandLineProcessorResult   // TODO add aliases
 {
-    private readonly Dictionary<string, ICommandLineHandler> _commandLineHandlers;
+    private readonly Dictionary<string, ICommandHandler> _commandLineHandlers;
 
-    public HelpCommandLineProcessorResult(Dictionary<string, ICommandLineHandler> commandLineHandler)
+    public HelpCommandLineProcessorResult(Dictionary<string, ICommandHandler> commandLineHandler)
     {
         _commandLineHandlers = commandLineHandler;
 
