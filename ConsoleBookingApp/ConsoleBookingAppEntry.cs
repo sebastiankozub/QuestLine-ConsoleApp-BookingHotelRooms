@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using System.Reflection;
 using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
+using ConsoleBookingApp.Configuration;
 
 namespace ConsoleBookingApp;
 
@@ -88,47 +89,6 @@ internal class ConsoleBookingAppEntry
     {
         Environment.Exit(code);
     }
-}
-
-public class MyFirstClass
-{
-    public const string MyFirstClassOptionsSegmentName = "FirstOptions";
-
-    public required string Option1 { get; set; }
-    public int Option2 { get; set; }
-}
-
-public class SecondOptions
-{
-    public const string SecondOptionsSegmentName = "SecondOptions";
-
-    public required string SettingOne { get; set; }
-    public int SettingTwo { get; set; }
-}
-
-public class UserInterfaceOptions
-{
-    public const string UserInterfaceSegmentName = "UserInterface";
-
-    [Required]
-    [MinLength(3)]
-    public required string HelpCommand { get; set; }
-
-    [Required]
-    [MinLength(3)]
-    public required string ExitCommand { get; set; }
-
-    [Required]
-    [MinLength(3)]
-    public required string SearchCommand { get; set; }
-
-    [Required]
-    [MinLength(3)]
-    public required string AvailabilityCommand { get; set; }
-
-    [Required]
-    [MinLength(1)]
-    public required string CommandPrompt { get; set; }
 }
 
 

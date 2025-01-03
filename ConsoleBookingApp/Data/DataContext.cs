@@ -5,7 +5,7 @@ namespace ConsoleBookingApp.Data;
 
 public class DataContext
 {
-    public List<Hotel> Hotels { get; private set; } = new List<Hotel>();
+    public List<Hotel> Hotels { get; private set; } = [];
     public List<Booking> Bookings { get; private set; } = [];
 
     public DataContext(string hotelRepositoryFilename, string bookingRepositoryFilename)
@@ -18,7 +18,7 @@ public class DataContext
 
     public Task Initialization { get; private set; }
 
-    public async Task SaveAsync() // as we have kind of unit of work pattern then common save method for consistency
+    public async Task SaveAsync() // as we have kind of unit of work pattern then common save method for consistency and future functionalities
     {
         await Task.WhenAll(
             SaveHotelsToJsonAsync(),
@@ -31,16 +31,11 @@ public class DataContext
 
     private async Task InitializeAsync()
     {
-        var deserializeOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
-
         using var hotelsReaderr = new StreamReader(_hotelRepositoryFilename);    
-        var hotels = await JsonSerializer.DeserializeAsync<List<Hotel>>(hotelsReaderr.BaseStream, deserializeOptions);
+        var hotels = await JsonSerializer.DeserializeAsync<List<Hotel>>(hotelsReaderr.BaseStream, JsonDataFileSerializerOptions());
 
         using var bookingsReader = new StreamReader(_bookingRepositoryFilename);
-        var bookings = await JsonSerializer.DeserializeAsync<List<Booking>>(bookingsReader.BaseStream, deserializeOptions);
+        var bookings = await JsonSerializer.DeserializeAsync<List<Booking>>(bookingsReader.BaseStream, JsonDataFileSerializerOptions());
 
         if (hotels is not null && bookings is not null)
         {
@@ -48,16 +43,11 @@ public class DataContext
             Bookings = bookings;
         }
 
-        //throw new ArgumentException("One or more underlying datafiles are empty or corrupted.");
+        //throw new ArgumentException("One or more underlying datafiles are empty or corrupted.");  // maybe? the exception could be more descriptive then one from JsonSerializer
         //var fs = File.OpenRead(_bookingRepositoryFilename);
     }
 
-    private JsonSerializerOptions GetDeserializerOptions()
-    {
-        return GetJsonSerializerOptions();
-    }
-
-    private JsonSerializerOptions GetJsonSerializerOptions()
+    private JsonSerializerOptions JsonDataFileSerializerOptions()
     {
         return new JsonSerializerOptions
         {
@@ -69,13 +59,13 @@ public class DataContext
     private async Task SaveHotelsToJsonAsync()
     {
         using var hotelsWriter = new StreamWriter(_hotelRepositoryFilename);
-        await hotelsWriter.WriteAsync(JsonSerializer.Serialize(Hotels, GetJsonSerializerOptions()));
+        await hotelsWriter.WriteAsync(JsonSerializer.Serialize(Hotels, JsonDataFileSerializerOptions()));
     }
 
     private async Task SaveBookingsToJsonAsync()
     {
         using var bookingsWriter = new StreamWriter(_bookingRepositoryFilename);
-        await bookingsWriter.WriteAsync(JsonSerializer.Serialize(Bookings, GetJsonSerializerOptions()));
+        await bookingsWriter.WriteAsync(JsonSerializer.Serialize(Bookings, JsonDataFileSerializerOptions()));
     }
 }
 

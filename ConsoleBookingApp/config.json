@@ -1,7 +1,6 @@
 {
-
   "FirstOptions": {
-    "Option1": "some string value",
+    /*"Option1": null,*/
     "Option2": 42
   },
 
@@ -11,12 +10,12 @@
   },
 
   "UserInterface": {
-    "HelpCommand": "Hel",
-    "ExitCommand": "Exi",
-    "SearchCommand": "Sea",
-    "AvailabilityCommand": "Ava",
-    "CommandPrompt" : ">>"
+    "CommandsAliases": {
+      /*"Help": "Help",
+      "Exit": "Exit",
+      "Search": "Search",
+      "Availability": "Availability"*/
+    },
+    "CommandPrompt": ">>"
   }
-
 }
-

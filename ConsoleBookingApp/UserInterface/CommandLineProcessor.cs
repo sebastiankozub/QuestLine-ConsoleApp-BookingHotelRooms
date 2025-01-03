@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Options;
-using Microsoft.VisualBasic.FileIO;
+﻿using ConsoleBookingApp.Configuration;
+using Microsoft.Extensions.Options;
 using System.Text;
 
 namespace ConsoleBookingApp.UserInterface;
@@ -12,13 +12,22 @@ public class CommandLineProcessor
     private readonly string _exitCommandName;
     private readonly UserInterfaceOptions _uiOptions;
 
-    public CommandLineProcessor(ICommandLineParser parser, Dictionary<string, ICommandLineHandler> handlers, IOptions<UserInterfaceOptions> userInterfaceOptions)
+    //test only
+    private readonly MyFirstClass _first;
+    private readonly SecondOptions _second;
+
+    public CommandLineProcessor(ICommandLineParser parser, Dictionary<string, ICommandLineHandler> handlers, IOptions<UserInterfaceOptions> userInterfaceOptions, MyFirstClass first, SecondOptions second)
     {
         _parser = parser;
         _commandLineHandlers = handlers;
+
         _uiOptions = userInterfaceOptions.Value;
-        _helpCommandName = _uiOptions.HelpCommand;
-        _exitCommandName = _uiOptions.ExitCommand;
+
+        _helpCommandName = _uiOptions.CommandsAliases?.Help ?? nameof(UserInterfaceOptions.CommandsAliases.Help);
+        _exitCommandName = _uiOptions.CommandsAliases?.Exit ?? nameof(UserInterfaceOptions.CommandsAliases.Exit);
+
+        _first = first;
+        _second = second;
     }
 
     public async Task<CommandLineProcessorResult> ProcessCommandAsync(string commandLine)

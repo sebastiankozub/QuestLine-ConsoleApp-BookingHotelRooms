@@ -18,7 +18,6 @@ internal class BookingAppConsoleArgsParser
         _bookingsArgsSwitch = "bookings";
     }
 
-
     public (string HotelsFilename, string BookingsFilname) Parse()
     {
         var hotelRepositoryFilename = GetParameterValue(_hotelsArgsSwitch);

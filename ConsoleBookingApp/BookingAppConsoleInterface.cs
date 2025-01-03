@@ -1,4 +1,5 @@
-﻿using ConsoleBookingApp.Data;
+﻿using ConsoleBookingApp.Configuration;
+using ConsoleBookingApp.Data;
 using ConsoleBookingApp.UserInterface;
 using Microsoft.Extensions.Options;
 
@@ -15,18 +16,21 @@ internal class BookingAppConsoleInterface(CommandLineProcessor processor, DataCo
         while (true)
         {
             Console.WriteLine("CONSOLE BOOKING APP");
-            Console.WriteLine($"Type {_userInterfaceOptions.HelpCommand}() for quick help or use favorite known command!");  
+            Console.WriteLine($"Type {_userInterfaceOptions.CommandsAliases.Help}() for quick help or use favorite known command!");  
             Console.WriteLine();
-            Console.Write(_userInterfaceOptions.CommandPrompt);
+            Console.Write(_userInterfaceOptions.CommandPrompt);  // TODO abstract to different place Console class calls - ones like above
 
             var commandLine = Console.ReadLine();
 
             var commandLineProcessorResult = await _cmdLineProcessor.ProcessCommandAsync(string.IsNullOrEmpty(commandLine) ? "" : commandLine);
 
+
             if (commandLineProcessorResult.Success is false)
                 Console.WriteLine($"Failed to service the command: {commandLine}");
 
+
             Console.WriteLine(commandLineProcessorResult.Message);
+
 
             if (commandLineProcessorResult.PostResultAction is not null)
                 commandLineProcessorResult.PostResultAction();        

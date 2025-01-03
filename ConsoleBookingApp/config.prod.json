@@ -1,6 +1,6 @@
 {
   "MyFirstClass": {
-    "Option1": "some string value",
+    /*"Option1": ,*/
     "Option2": 42
   },
   "MySecondClass": {
