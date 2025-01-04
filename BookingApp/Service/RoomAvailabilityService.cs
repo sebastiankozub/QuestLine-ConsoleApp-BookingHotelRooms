@@ -1,4 +1,5 @@
 ﻿using BookingData;
+using System.Linq;
 
 namespace BookingApp.Service;
 
@@ -6,24 +7,29 @@ public class RoomAvailabilityService : BookingAppService, IRoomAvailabilityServi
 {
     public RoomAvailabilityService(DataContext dataContext) : base(dataContext) { }
 
-    public IEnumerable<RoomAvaialabilityResult> GetRoomAvailabilityByType(string hotelId, (DateOnly from, DateOnly to) availabilityPerdiod, string roomType)
+    public async Task<IEnumerable<RoomAvaialabilityResult>> GetRoomAvailabilityByType(string hotelId, (DateOnly from, DateOnly to) availabilityPerdiod, string roomType)
     {
         var bookings = _dataContext.Bookings;
         var hotels = _dataContext.Hotels;
-
+        
         var dates = ListOfDates(availabilityPerdiod.from, availabilityPerdiod.to);
 
-        var bookingsPerDay = dates.Select(dayDate => new
+        var bookingsByDay = dates.Select(date => new
         {
-            Date = dayDate,
+            Date = date,
             BookingCount = bookings
-                .Where(b => b.RoomType == roomType && b.HotelId == hotelId && availabilityPerdiod.from <= dayDate && availabilityPerdiod.to >= dayDate)
+                .Where(b => b.RoomType == roomType && b.HotelId == hotelId && b.Arrival <= date && b.Departure >= date)
                 .Count()
         });
 
-        var availabilityPerDay = hotels.SingleOrDefault(hotel => hotel.Id == hotelId)?
+        var hotelAvailability = hotels.Single(hotel => hotel.Id == hotelId)
             .Rooms.Count(room => room.RoomType == roomType);
 
+        var hotelAvailabilityPerDay = Enumerable.Repeat(hotelAvailability, dates.Count());
+
+        var resultRoomAvailability = hotelAvailabilityPerDay.Zip(bookingsByDay, (a, b) =>  a - b.BookingCount);
+
+        await Task.Delay(1000);
         return new List<RoomAvaialabilityResult>();
     }
 
@@ -50,7 +56,7 @@ public interface IRoomAvailabilityService
     // Availability(H1,         20240901, SGL)  - one day
     // Availability(H1, 20240901-20240903, DBL)   - period
 
-    IEnumerable<RoomAvaialabilityResult> GetRoomAvailabilityByType(string hotelId, (DateOnly from, DateOnly to) availabilityPerdiod, string roomType);
+    Task<IEnumerable<RoomAvaialabilityResult>> GetRoomAvailabilityByType(string hotelId, (DateOnly from, DateOnly to) availabilityPerdiod, string roomType);
 
     // the program should give the availability count for the specified room type and        date range.
     // Note:

@@ -55,6 +55,8 @@ public class CommandLineProcessor
         if (givenCommand == _exitCommand)        
             return new ExitCommandLineProcessorResult(givenCommand, _closeApplicationAction);
 
+        // The Dictionary is a list of Transient instances but not reinstatined as new transient but taken instantinated from dictionaty
+
         // TODO refactor to use CommandLineAliasResolver or better naming ? BookingAppAliasResolver : IAliasResolver
         // given command or alias Resolve() return default command string  - null reference warning also cleaned then
         if ((IsAlias(givenCommand, out var commandFromAlias) && _commandLineHandlers.TryGetValue(commandFromAlias, out var commandHandler))
@@ -69,6 +71,27 @@ public class CommandLineProcessor
                 PostProcess = null
             };
         }
+
+        //using (var scope = _serviceProvider.CreateScope())
+        //{
+        //    var handlers = scope.ServiceProvider.GetServices<ICommandHandler>();
+        //    var handler = handlers.FirstOrDefault(h => input.StartsWith(h.CommandName));
+
+        //    if (handler != null)
+        //    {
+        //        string commandData = input.Substring(handler.CommandName.Length).Trim();
+        //        await handler.HandleAsync(commandData);
+        //    }
+        //    else
+        //    {
+        //        Console.WriteLine("Unknown command.");
+        //    }
+        //}
+
+
+
+
+
         else        
             return new NotFoundCommandLineProcessorResult(givenCommand);        
     }
