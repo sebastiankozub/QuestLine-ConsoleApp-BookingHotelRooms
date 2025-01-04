@@ -15,11 +15,14 @@ public class CommandLineProcessor
     private readonly UserInterfaceOptions _uiOptions;
     private readonly UserInterfaceCommandsOptions _uiCommandsOptions;
 
+    Action<int>? _closeApplicationAction;
+
     //test only
     private readonly MyFirstClass _first;
     private readonly SecondOptions _second;
 
-    public CommandLineProcessor(ICommandLineParser parser, Dictionary<string, ICommandHandler> handlers, IOptions<UserInterfaceOptions> userInterfaceOptions, IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions, MyFirstClass first, SecondOptions second)
+    public CommandLineProcessor(ICommandLineParser parser, Dictionary<string, ICommandHandler> handlers, IOptions<UserInterfaceOptions> userInterfaceOptions, 
+                            IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions, MyFirstClass first, SecondOptions second, Action<int>? closeApplicationAction)
     {
         _parser = parser;
         _commandLineHandlers = handlers;
@@ -29,6 +32,8 @@ public class CommandLineProcessor
 
         _helpCommand = _uiCommandsOptions.Help ?? nameof(UserInterfaceCommandsOptions.Help);
         _exitCommand = _uiCommandsOptions.Exit ?? nameof(UserInterfaceCommandsOptions.Exit);
+
+        _closeApplicationAction = closeApplicationAction;
 
         _first = first;
         _second = second;
@@ -48,9 +53,9 @@ public class CommandLineProcessor
             return new HelpCommandLineProcessorResult(_commandLineHandlers);
         
         if (givenCommand == _exitCommand)        
-            return new ExitCommandLineProcessorResult(givenCommand);
+            return new ExitCommandLineProcessorResult(givenCommand, _closeApplicationAction);
 
-        // TODO refactor to use CommandLineAliasResolver better BookingAppAliasResolver : IAliasResolver
+        // TODO refactor to use CommandLineAliasResolver or better naming ? BookingAppAliasResolver : IAliasResolver
         // given command or alias Resolve() return default command string  - null reference warning also cleaned then
         if ((IsAlias(givenCommand, out var commandFromAlias) && _commandLineHandlers.TryGetValue(commandFromAlias, out var commandHandler))
             || _commandLineHandlers.TryGetValue(givenCommand, out commandHandler))  

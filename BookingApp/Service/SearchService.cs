@@ -26,8 +26,7 @@ interface ISearchService
     //Example
     // output:  
     // (20241101-20241103,2),
-    // (20241203-20241210,1) 
-
+    // (20241203-20241210,1)
 }
 
 public class SearchResult

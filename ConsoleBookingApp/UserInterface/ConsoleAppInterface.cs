@@ -34,7 +34,7 @@ internal class ConsoleAppInterface(CommandLineProcessor processor, DataContext d
 
 
             if (commandLineProcessorResult.PostProcess is not null)
-                commandLineProcessorResult.PostProcess();
+                commandLineProcessorResult.PostProcess(0);
         }
     }
 }

@@ -36,7 +36,7 @@ TODO MUST-TO:
 - repair config json - use dictionary collection for command aliases
 
 3. Command Aliases
-- finish command alias mechanism
+- finish command alias mechanism - extracting to new class and unit testing
 
 4. make some classes cleaner & more compact - add unit testing
 

@@ -1,7 +1,8 @@
-﻿// Using CQRS convention most of ICommandHandler implementations are not command but query handlers
-// In the ICommandHandler interface command simply stands for user executed action
+﻿// Using CQRS convention most of ICommandHandler implementations are query handlers
+// In the ICommandHandler interface command simply stands for user executed command line action
 // left as it is for now - refactor when more functionalities mixing query and command handlers will be added
 
+using BookingApp.Service;
 using BookingData;
 using System.Text;
 
@@ -14,9 +15,9 @@ public interface ICommandHandler
 }
 
 
-public class AvailabilityCommandHandler(DataContext dataContext) : ICommandHandler
+public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilityService) : ICommandHandler
 {
-    private readonly DataContext _dataContext = dataContext;
+    private readonly IRoomAvailabilityService _roomAvailabilityService = roomAvailabilityService;
 
     public string CommandName => "Availability";
 
@@ -24,34 +25,48 @@ public class AvailabilityCommandHandler(DataContext dataContext) : ICommandHandl
     {
         await Task.Delay(333);
 
-        var bookings = _dataContext.Bookings.Where(h => h != null);
-        var hotels = _dataContext.Hotels.Where(h => h != null);
+        var from = new DateOnly(0, 0, 0);  // parse from parameters
+        var to = DateOnly.MaxValue;
+        var roomType = "SGL";
 
-        var sb = new StringBuilder();
+        _roomAvailabilityService.GetRoomAvailabilityByType("", (from, to), roomType);
 
-        if (parameters != null)
-        {
-            sb.AppendLine("Parameters:");
-            foreach (var parameter in parameters)
-            {
-                sb.AppendLine($"{parameter.Trim()}");
-            }
-            sb.AppendLine("");
-        }
 
-        sb.AppendLine("Hotels:");
-        foreach (var h in hotels)
-        {
-            sb.AppendLine($"{h.Name}");
-        }
 
-        sb.AppendLine("Bookings:");
-        foreach (var b in bookings)
-        {
-            sb.AppendLine($"{b.HotelId} {b.RoomType}");
-        }
 
-        return new CommandHandlerResult { Success = true, Message = sb.ToString() };
+        return new CommandHandlerResult { Success = true, Message = "Availability without exception" };
+
+
+
+
+        //var bookings = _dataContext.Bookings.Where(h => h != null);
+        //var hotels = _dataContext.Hotels.Where(h => h != null);
+
+        //var sb = new StringBuilder();
+
+        //if (parameters != null)
+        //{
+        //    sb.AppendLine("Parameters:");
+        //    foreach (var parameter in parameters)
+        //    {
+        //        sb.AppendLine($"{parameter.Trim()}");
+        //    }
+        //    sb.AppendLine("");
+        //}
+
+        //sb.AppendLine("Hotels:");
+        //foreach (var h in hotels)
+        //{
+        //    sb.AppendLine($"{h.Name}");
+        //}
+
+        //sb.AppendLine("Bookings:");
+        //foreach (var b in bookings)
+        //{
+        //    sb.AppendLine($"{b.HotelId} {b.RoomType}");
+        //}
+
+        //return new CommandHandlerResult { Success = true, Message = sb.ToString() };
     }
 }
 

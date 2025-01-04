@@ -2,13 +2,6 @@
 
 namespace BookingApp.Service
 {
-    interface IBookingAppService
-    {
-
-
-
-    }
-
     public abstract class BookingAppService : IBookingAppService
     {
         protected readonly DataContext _dataContext;
@@ -17,5 +10,12 @@ namespace BookingApp.Service
         {
             _dataContext = dataContext;
         }
+    }
+
+    interface IBookingAppService
+    {
+
+
+
     }
 }
