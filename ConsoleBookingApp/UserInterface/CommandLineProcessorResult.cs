@@ -8,6 +8,7 @@ public class CommandLineProcessorResult
     public bool Success { get; set; }
     public string? Message { get; set; }
     public Action<int>? PostProcess { get; set; }
+    public string? Result { get; set; }
 }
 
 public class EmptyCommandLineProcessorResult : CommandLineProcessorResult
@@ -49,7 +50,7 @@ public class HelpCommandLineProcessorResult : CommandLineProcessorResult   // TO
         sb.AppendLine("Available commands:");
 
         foreach (var handler in _commandLineHandlers)
-            sb.AppendLine($"{handler.Value.CommandName}()");
+            sb.AppendLine($"{handler.Value.DefaultCommandName}()");
 
         return sb.ToString();
     }
@@ -57,11 +58,11 @@ public class HelpCommandLineProcessorResult : CommandLineProcessorResult   // TO
 
 public class ExitCommandLineProcessorResult : CommandLineProcessorResult
 {
-    public ExitCommandLineProcessorResult(string command, Action<int>? cloasApp)
+    public ExitCommandLineProcessorResult(string command, Action<int>? closeAppDelegate)
     {
         Message = $"{command}() command received. Application is closing...";
         Success = true;
-        PostProcess = cloasApp;
+        PostProcess = closeAppDelegate;
     }
 }
 

@@ -7,7 +7,7 @@ public class RoomAvailabilityService : BookingAppService, IRoomAvailabilityServi
 {
     public RoomAvailabilityService(DataContext dataContext) : base(dataContext) { }
 
-    public async Task<IEnumerable<RoomAvaialabilityResult>> GetRoomAvailabilityByType(string hotelId, (DateOnly from, DateOnly to) availabilityPerdiod, string roomType)
+    public async Task<IEnumerable<RoomAvaialabilityResult>> GetRoomAvailabilityByRoomType(string hotelId, (DateOnly from, DateOnly to) availabilityPerdiod, string roomType)
     {
         var bookings = _dataContext.Bookings;
         var hotels = _dataContext.Hotels;
@@ -22,15 +22,18 @@ public class RoomAvailabilityService : BookingAppService, IRoomAvailabilityServi
                 .Count()
         });
 
-        var hotelAvailability = hotels.Single(hotel => hotel.Id == hotelId)
-            .Rooms.Count(room => room.RoomType == roomType);
+        var hotel = hotels.SingleOrDefault(hotel => hotel.Id == hotelId) ?? 
+            throw new RoomAvailabilityServiceException($"Hotel with given id {hotelId} not found");
 
-        var hotelAvailabilityPerDay = Enumerable.Repeat(hotelAvailability, dates.Count());
+        var numberOfRommsOfType = hotel.Rooms.Count(room => room.RoomType == roomType);
 
-        var resultRoomAvailability = hotelAvailabilityPerDay.Zip(bookingsByDay, (a, b) =>  a - b.BookingCount);
+        var hotelAvailability = numberOfRommsOfType == 0 ? 
+            throw new RoomAvailabilityServiceException($"Hotel with given id {hotelId} does not offer any room type {roomType}") : numberOfRommsOfType;
 
-        await Task.Delay(1000);
-        return new List<RoomAvaialabilityResult>();
+        var hotelAvailabilityPerDay = Enumerable.Repeat(hotelAvailability, dates.Count);
+
+        return hotelAvailabilityPerDay
+            .Zip(bookingsByDay, (a, b) =>  new RoomAvaialabilityResult { Day = b.Date, AvailabilityCount = a - b.BookingCount });
     }
 
     public static List<DateOnly> ListOfDates(DateOnly from, DateOnly to)
@@ -53,19 +56,22 @@ public class RoomAvailabilityService : BookingAppService, IRoomAvailabilityServi
 
 public interface IRoomAvailabilityService
 {
-    // Availability(H1,         20240901, SGL)  - one day
-    // Availability(H1, 20240901-20240903, DBL)   - period
-
-    Task<IEnumerable<RoomAvaialabilityResult>> GetRoomAvailabilityByType(string hotelId, (DateOnly from, DateOnly to) availabilityPerdiod, string roomType);
-
-    // the program should give the availability count for the specified room type and        date range.
-    // Note:
-    // hotels sometimes accept overbookings so the value can be negative to indicate
-    // that the hotel is over capacity for that room type.    
+    Task<IEnumerable<RoomAvaialabilityResult>> GetRoomAvailabilityByRoomType(string hotelId, (DateOnly from, DateOnly to) availabilityPerdiod, string roomType);
 }
 
 public class RoomAvaialabilityResult
 {
     public DateOnly Day { get; set; }
     public int AvailabilityCount { get; set; }
+}
+
+public class RoomAvailabilityServiceException : Exception
+{
+    public RoomAvailabilityServiceException()
+            : base(nameof(RoomAvailabilityServiceException))
+    { }
+
+    public RoomAvailabilityServiceException(string? message)
+      : base(message ?? nameof(RoomAvailabilityServiceException))
+    { } 
 }

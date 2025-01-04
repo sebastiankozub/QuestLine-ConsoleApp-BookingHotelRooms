@@ -15,7 +15,7 @@ public class CommandLineProcessor
     private readonly UserInterfaceOptions _uiOptions;
     private readonly UserInterfaceCommandsOptions _uiCommandsOptions;
 
-    Action<int>? _closeApplicationAction;
+    private readonly Action<int>? _closeApplicationAction;
 
     //test only
     private readonly MyFirstClass _first;
@@ -55,11 +55,12 @@ public class CommandLineProcessor
         if (givenCommand == _exitCommand)        
             return new ExitCommandLineProcessorResult(givenCommand, _closeApplicationAction);
 
-        // The Dictionary is a list of Transient instances but not reinstatined as new transient but taken instantinated from dictionaty
+        // TODO The Dictionary is a list of Transient instances but not reinstatined as new transient but taken instantinated from dictionaty
 
-        // TODO refactor to use CommandLineAliasResolver or better naming ? BookingAppAliasResolver : IAliasResolver
+        // TODO refactor to use CommandLineAliasResolver or better naming BookingAppAliasResolver : IAliasResolver?
         // given command or alias Resolve() return default command string  - null reference warning also cleaned then
-        if ((IsAlias(givenCommand, out var commandFromAlias) && _commandLineHandlers.TryGetValue(commandFromAlias, out var commandHandler))
+        if ((IsAlias(givenCommand, out var commandFromAlias) 
+            && _commandLineHandlers.TryGetValue(commandFromAlias, out var commandHandler))
             || _commandLineHandlers.TryGetValue(givenCommand, out commandHandler))  
         {
             var commandResult = await commandHandler.HandleAsync(givenParameters);
@@ -68,10 +69,13 @@ public class CommandLineProcessor
             {
                 Message = commandResult.Message,
                 Success = true,
+                Result = commandResult.ResultData,
                 PostProcess = null
             };
         }
 
+        // snippet to get transient every user command triggered
+        //
         //using (var scope = _serviceProvider.CreateScope())
         //{
         //    var handlers = scope.ServiceProvider.GetServices<ICommandHandler>();
@@ -88,16 +92,12 @@ public class CommandLineProcessor
         //    }
         //}
 
-
-
-
-
         else        
             return new NotFoundCommandLineProcessorResult(givenCommand);        
     }
     
     private bool IsAlias(string alias, out string? defaultCommand)   
-                    // TODO refactor to use CommandLineAliasResolver - given command or alias Resolve return default command string
+    // TODO refactor to use CommandLineAliasResolver - given command or alias Resolve return default command string
     {
         var aliasFound = false;
         defaultCommand = null;

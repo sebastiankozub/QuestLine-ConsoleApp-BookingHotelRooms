@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using ConsoleBookingApp.Configuration;
 using ConsoleBookingApp.CommandHandler;
 using BookingData;
-using System.Xml.Serialization;
 using BookingApp.Service;
 
 namespace ConsoleBookingApp;
@@ -76,18 +75,17 @@ internal class ConsoleBookingAppEntry
                 services.Add(new ServiceDescriptor(typeof(ICommandHandler), commandLineHandler, ServiceLifetime.Transient));
 
             services
-                .AddSingleton(sp => sp.GetServices<ICommandHandler>().ToDictionary(h => h.CommandName))
+                .AddTransient(sp => sp.GetServices<ICommandHandler>().ToDictionary(h => h.DefaultCommandName))
                 .AddSingleton<ConsoleAppInterface>();
 
             // BOOKING APP DOMAIN
             services.AddTransient<IRoomAvailabilityService, RoomAvailabilityService>();
 
-
             // BUILD & RUN
             var serviceProvider = services.BuildServiceProvider();
 
             // DATA LAYER INITIALIZATION                     
-            var dataContext = serviceProvider.GetRequiredService<DataContext>();  // check NuGet/HostInitActions for asyncronous initialization
+            var dataContext = serviceProvider.GetRequiredService<DataContext>();  // TODO check NuGet/HostInitActions for asyncronous initialization
             await dataContext.Initialization;
 
             // RUN
@@ -96,7 +94,9 @@ internal class ConsoleBookingAppEntry
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Fatal or non-servicable exception during application run.\nProblem detail:\n{ex.Message}");
+            Console.WriteLine($"Fatal or non-servicable error during application run." + Environment.NewLine +   // TODO abstract from Console
+                              "Problem detail:" + Environment.NewLine + 
+                              $"{ex.Message}");
         }
     }
 

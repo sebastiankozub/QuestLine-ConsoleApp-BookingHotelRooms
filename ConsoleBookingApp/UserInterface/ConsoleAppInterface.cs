@@ -17,24 +17,41 @@ internal class ConsoleAppInterface(CommandLineProcessor processor, DataContext d
     {
         while (true)
         {
-            Console.WriteLine("CONSOLE BOOKING APP");
-            Console.WriteLine($"Type {_helpCommandName}() for quick help or use favorite known command!");
-            Console.WriteLine();
-            Console.Write(_userInterfaceOptions.CommandPrompt);  // TODO abstract to different place Console class calls - ones like above and below
+            try
+            {
+                Console.WriteLine("CONSOLE BOOKING APP");
 
-            var commandLine = Console.ReadLine();
+                // TODO abstract to different place Console class calls - ones like above and below
+                // TODO create Display abstraction to Console Read and Write be used as an interface
 
-            var commandLineProcessorResult = await _cmdLineProcessor.ProcessCommandAsync(string.IsNullOrEmpty(commandLine) ? "" : commandLine);
+                Console.WriteLine($"Type {_helpCommandName}() for quick help or use favorite known command!");
+                Console.WriteLine();
+                Console.Write(_userInterfaceOptions.CommandPrompt);  
 
-            if (commandLineProcessorResult.Success is false)
-                Console.WriteLine($"Failed to service the command: {commandLine}");
+                var commandLine = Console.ReadLine();
 
+                var commandLineProcessorResult = await _cmdLineProcessor.ProcessCommandAsync(string.IsNullOrEmpty(commandLine) ? "" : commandLine);
 
-            Console.WriteLine(commandLineProcessorResult.Message);
+                if (commandLineProcessorResult.Success is false)
+                {
+                    Console.WriteLine($"Failed to service the command: {commandLine}");
+                    Console.WriteLine(commandLineProcessorResult.Message);
+                }
+                else
+                {
+                    Console.WriteLine($"Command: {commandLine} executed succesfully" + Environment.NewLine + Environment.NewLine);
+                    Console.WriteLine(commandLineProcessorResult.Message + Environment.NewLine + Environment.NewLine);
 
+                    Console.WriteLine(commandLineProcessorResult.Result + Environment.NewLine);
+                }
 
-            if (commandLineProcessorResult.PostProcess is not null)
-                commandLineProcessorResult.PostProcess(0);
+                if (commandLineProcessorResult.PostProcess is not null)
+                    commandLineProcessorResult.PostProcess(0);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occured: {ex.Message}");
+            }
         }
     }
 }

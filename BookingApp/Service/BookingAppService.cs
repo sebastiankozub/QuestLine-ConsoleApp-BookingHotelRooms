@@ -14,8 +14,5 @@ namespace BookingApp.Service
 
     interface IBookingAppService
     {
-
-
-
     }
 }

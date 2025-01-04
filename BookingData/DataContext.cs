@@ -19,7 +19,8 @@ public class DataContext
 
     public Task Initialization { get; private set; }
 
-    public async Task SaveAsync() // as we have kind of unit of work pattern then common save method for consistency and future functionalities
+    public async Task SaveAsync() 
+    // as we have kind of unit of work pattern here so common save method for consistency and future functionalities
     {
         await Task.WhenAll(
             SaveHotelsToJsonAsync(),
@@ -43,7 +44,7 @@ public class DataContext
             Hotels = hotels;
             Bookings = bookings;
         }
-
+        
         //throw new ArgumentException("One or more underlying datafiles are empty or corrupted.");  // maybe? the exception could be more descriptive then one from JsonSerializer
         //var fs = File.OpenRead(_bookingRepositoryFilename);
     }
