@@ -23,7 +23,7 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
                 if (roomAvailabitily.AvailabilityCount > 0)
                 {
                     outputBuilder.Append(
-                    "(" + $"{roomAvailabitily.Day}" + "," + $"{roomAvailabitily.AvailabilityCount}" + "),");
+                    "(" + $"{roomAvailabitily.Day.ToString("yyyyMMdd")}" + "," + $"{roomAvailabitily.AvailabilityCount}" + "),");
                 }
                 else
                 {
@@ -31,7 +31,7 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
                 }
             }               
 
-            return new SearchCommandHandlerResult { Success = true, ResultData = outputBuilder.ToString()  };
+            return new SearchCommandHandlerResult { Success = true, ResultData = outputBuilder.ToString() };
         }
         catch(RoomAvailabilityServiceException ex)
         {
@@ -42,17 +42,17 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
                 $"Error message: {ex.Message}"
             };
         }
-
     }
 
-    // TODO - refactor this copy-paste from AvailabilityCommandHandler
-    private bool SearchCommandValidate(string hotelId, (DateOnly from, DateOnly to) availabilityPerdiod, object roomType)
+    private static bool SearchCommandValidate(string hotelId, (DateOnly from, DateOnly to) availabilityPerdiod, object roomType)
     {
         if (hotelId.Length > 10 || hotelId.Length < 2)
             throw new SearchCommandHandlerValidateException();
 
-        //if (availabilityPerdiod.from < DateOnly.FromDateTime(DateTime.UtcNow).AddDays(1) || let search for historical data
         if (availabilityPerdiod.to < availabilityPerdiod.from)
+            throw new SearchCommandHandlerValidateException();
+
+        if (availabilityPerdiod.from < GetTommorowUtcDateOnly())
             throw new SearchCommandHandlerValidateException();
 
         return true;
@@ -75,20 +75,24 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
 
         if (days.Length <= 0)        
             throw new SearchCommandHandlerParseException();
-            //from = to = DateOnly.TryParseExact(days, "yyyyMMdd", out var dateOnly) ? dateOnly : 
-        
+ 
         if (days.Length >= 4)
             throw new SearchCommandHandlerParseException();
 
-        var numberOfDaysAhead = int.TryParse(days, out var n) ? n : throw new SearchCommandHandlerParseException(); 
+        var numberOfDaysAhead = int.TryParse(days, out var n) ? n : throw new SearchCommandHandlerParseException();
 
-        DateOnly from = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
+        DateOnly from = GetTommorowUtcDateOnly();
         DateOnly to = from.AddDays(numberOfDaysAhead - 1);
 
         if (from > to)
             (from, to) = (to, from);
 
         return new(hotelId, (from, to), roomType);
+    }
+
+    private static DateOnly GetTommorowUtcDateOnly()
+    {
+        return DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
     }
 }
 

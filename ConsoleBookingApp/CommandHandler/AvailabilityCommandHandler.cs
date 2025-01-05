@@ -9,21 +9,39 @@ public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilit
 
     public override async Task<CommandHandlerResult> HandleAsync(string[] parameters)
     {
-        var parsedParameters = AvailabilityCommandParse(parameters);
-        AvailabilityCommandValidate(parsedParameters.hotelId, parsedParameters.availabitlityPeriod, parsedParameters.roomType);
-
         try
-        { 
+        {
+            var parsedParameters = AvailabilityCommandParse(parameters);
+            AvailabilityCommandValidate(parsedParameters.hotelId, parsedParameters.availabitlityPeriod, parsedParameters.roomType);
+
             var roomAvailabilities = await _roomAvailabilityService
                 .GetRoomAvailabilityByRoomType(parsedParameters.hotelId, parsedParameters.availabitlityPeriod, parsedParameters.roomType);
 
             var outputBuilder = new StringBuilder();
             foreach (var roomAvailabitily in roomAvailabilities)
-                outputBuilder.AppendLine(roomAvailabitily.Day + " - " + roomAvailabitily.AvailabilityCount + Environment.NewLine);
+                outputBuilder.AppendLine(roomAvailabitily.Day.ToString("yyyyMMdd") + " - " + roomAvailabitily.AvailabilityCount);
 
             return new CommandHandlerResult { Success = true, ResultData = outputBuilder.ToString() };
         }
-        catch(RoomAvailabilityServiceException ex)
+        catch (RoomAvailabilityServiceException ex)
+        {
+            return new CommandHandlerResult
+            {
+                Success = false,
+                Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
+                $"Error message: {ex.Message}"
+            };
+        }
+        catch (AvailabilityCommandHandlerParseException ex)
+        {
+            return new CommandHandlerResult
+            {
+                Success = false,
+                Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
+                $"Error message: {ex.Message}"
+            };
+        }
+        catch (AvailabilityCommandHandlerValidateException ex)
         {
             return new CommandHandlerResult { 
                 Success = false, 
