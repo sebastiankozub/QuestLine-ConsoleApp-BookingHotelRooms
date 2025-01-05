@@ -44,7 +44,7 @@ public class HelpCommandLineProcessorResult : CommandLineProcessorResult   // TO
         PostProcess = null;
     }
 
-    private string BuildHelpInfo()   // add and use aliases - use CommandLineAliasResolver or simply aliases in Dictionary from IOptions - refactor configuration to use Dictionary
+    private string BuildHelpInfo()   // add and use aliases engine instead of method and wrong design - use CommandLineAliasResolver or simply aliases in Dictionary from IOptions - refactor configuration to use Dictionary
     {
         var sb = new StringBuilder();
         sb.AppendLine("Available commands:");
@@ -73,7 +73,7 @@ public class InvalidFormatCommandLineProcessorResult : CommandLineProcessorResul
 {
     public InvalidFormatCommandLineProcessorResult(string helpCommand)
     {
-        Message = Message = $"Invalid command format. Mind even empty parameter list command has to end with round brackets. Try {helpCommand}() to check for existing commands.";
+        Message = $"Invalid command format. Mind even empty parameter list command has to end with round brackets. Try {helpCommand}() to check for existing commands.";
         Success = false;
         PostProcess = null;
     }

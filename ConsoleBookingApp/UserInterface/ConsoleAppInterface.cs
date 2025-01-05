@@ -40,11 +40,13 @@ internal class ConsoleAppInterface(CommandLineProcessor processor, IOptions<User
                 else
                 {
                     Console.WriteLine($"Command: [{commandLine}] executed succesfully." + Environment.NewLine);
+                    
                     if (!string.IsNullOrEmpty(commandLineProcessorResult.Result))
                     {
                         Console.WriteLine("Command result: " + Environment.NewLine);
                         Console.WriteLine(commandLineProcessorResult.Result + Environment.NewLine);
                     }
+
                     if (!string.IsNullOrEmpty(commandLineProcessorResult.Message))
                     {
                         Console.WriteLine("Message: " + Environment.NewLine);

@@ -7,7 +7,7 @@ public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilit
 {
     private readonly IRoomAvailabilityService _roomAvailabilityService = roomAvailabilityService;
 
-    public override async Task<CommandHandlerResult> HandleAsync(string[] parameters)
+    public override async Task<ICommandHandlerResult> HandleAsync(string[] parameters)
     {
         try
         {
@@ -21,11 +21,11 @@ public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilit
             foreach (var roomAvailabitily in roomAvailabilities)
                 outputBuilder.AppendLine(roomAvailabitily.Day.ToString("yyyyMMdd") + " - " + roomAvailabitily.RoomAvailabilityCount);
 
-            return new CommandHandlerResult { Success = true, ResultData = outputBuilder.ToString() };
+            return new AvailabilityCommandHandlerResult { Success = true, ResultData = outputBuilder.ToString() };
         }
         catch (AvailabilityCommandHandlerParseException ex)
         {
-            return new CommandHandlerResult
+            return new AvailabilityCommandHandlerResult
             {
                 Success = false,
                 Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
@@ -34,7 +34,7 @@ public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilit
         }
         catch (AvailabilityCommandHandlerValidateException ex)
         {
-            return new CommandHandlerResult
+            return new AvailabilityCommandHandlerResult
             {
                 Success = false,
                 Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
@@ -43,7 +43,7 @@ public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilit
         }
         catch (RoomAvailabilityServiceException ex)
         {
-            return new CommandHandlerResult
+            return new AvailabilityCommandHandlerResult
             {
                 Success = false,
                 Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
@@ -52,7 +52,7 @@ public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilit
         }
         catch (Exception ex)
         {
-            return new CommandHandlerResult
+            return new AvailabilityCommandHandlerResult
             {
                 Success = false,
                 Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +

@@ -1,6 +1,6 @@
 ﻿namespace ConsoleBookingApp.CommandHandler;
 
-public class CommandHandlerResult
+public class CommandHandlerResult : ICommandHandlerResult
 {
     public bool Success { get; set; }
     public string? Message { get; set; }
@@ -9,11 +9,15 @@ public class CommandHandlerResult
 }
 
 public class AvailabilityCommandHandlerResult : CommandHandlerResult
-{
-
-}
+{ }
 
 public class SearchCommandHandlerResult : CommandHandlerResult
-{
+{}
 
+public interface ICommandHandlerResult
+{
+    bool Success { get; set; }
+    string? Message { get; set; }
+    string? ResultData { get; set; }
+    Action? PostResultAction { get; set; }
 }

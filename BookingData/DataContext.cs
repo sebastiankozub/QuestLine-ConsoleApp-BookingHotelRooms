@@ -9,7 +9,7 @@ public class DataContext
     // to handle save to underlying storage or save on the fly when entity added
     public List<Hotel> Hotels { get; private set; } = [];  
     public List<Booking> Bookings { get; private set; } = [];
-
+    
     public DataContext(string hotelRepositoryFilename, string bookingRepositoryFilename)
     {
         _hotelRepositoryFilename = hotelRepositoryFilename;
@@ -55,7 +55,7 @@ public class DataContext
         };
     }
 
-    private async Task SaveHotelsToJsonAsync()  // looks like Save() chunks can be done as a generic methods
+    private async Task SaveHotelsToJsonAsync()  // looks like the methods  can be done as a generic methods
     {
         using var hotelsWriter = new StreamWriter(_hotelRepositoryFilename);
         await hotelsWriter.WriteAsync(JsonSerializer.Serialize(Hotels, JsonDataFileSerializerOptions()));

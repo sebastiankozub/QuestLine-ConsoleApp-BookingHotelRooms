@@ -4,12 +4,12 @@ namespace BookingApp.Service;
 
 public class RoomAvailabilityService(DataContext dataContext) : BookingAppService(dataContext), IRoomAvailabilityService
 {
-    public async Task<IEnumerable<RoomAvaialabilityResult>> GetRoomAvailabilityByRoomType(string hotelId, (DateOnly from, DateOnly to) availabilityPerdiod, string roomType, bool aggregated = false)
+    public async Task<IEnumerable<RoomAvaialabilityServiceResult>> GetRoomAvailabilityByRoomType(string hotelId, (DateOnly from, DateOnly to) availabilityPerdiod, string roomType, bool aggregated = false)
     {
         var bookings = _dataContext.Bookings;
         var hotels = _dataContext.Hotels;
         
-        return await Task<IEnumerable<RoomAvaialabilityResult>>.Run(() =>
+        return await Task<IEnumerable<RoomAvaialabilityServiceResult>>.Run(() =>
         {
             var dates = ListOfDates(availabilityPerdiod.from, availabilityPerdiod.to);
 
@@ -32,12 +32,10 @@ public class RoomAvailabilityService(DataContext dataContext) : BookingAppServic
             var hotelAvailabilityPerDay = Enumerable.Repeat(hotelAvailability, dates.Count);
 
             var roomAvailability = hotelAvailabilityPerDay
-                .Zip(bookingsByDay, (a, b) => new RoomAvaialabilityResult { Day = b.Date, SameCountPeriod = 1, RoomAvailabilityCount = a - b.BookingCount });
+                .Zip(bookingsByDay, (a, b) => new RoomAvaialabilityServiceResult { Day = b.Date, SameCountPeriod = 1, RoomAvailabilityCount = a - b.BookingCount });
 
-            if (aggregated)
-            {
-                return AggregateAvailabilityByDate(roomAvailability);
-            }
+            if (aggregated)            
+                return AggregateAvailabilityByDate(roomAvailability);            
             else
                 return roomAvailability;
         });
@@ -60,9 +58,9 @@ public class RoomAvailabilityService(DataContext dataContext) : BookingAppServic
             .ToList();
     }
 
-    private static List<RoomAvaialabilityResult> AggregateAvailabilityByDate(IEnumerable<RoomAvaialabilityResult> roomAvailability)
+    private static List<RoomAvaialabilityServiceResult> AggregateAvailabilityByDate(IEnumerable<RoomAvaialabilityServiceResult> roomAvailability)
     {
-        return roomAvailability.Aggregate(new List<RoomAvaialabilityResult>(), (acc, current) =>
+        return roomAvailability.Aggregate(new List<RoomAvaialabilityServiceResult>(), (acc, current) =>
         {
             if (acc.Count == 0 || acc.Last().RoomAvailabilityCount != current.RoomAvailabilityCount)
             {
@@ -88,11 +86,11 @@ public class RoomAvailabilityService(DataContext dataContext) : BookingAppServic
 
 public interface IRoomAvailabilityService
 {
-    Task<IEnumerable<RoomAvaialabilityResult>> GetRoomAvailabilityByRoomType(
+    Task<IEnumerable<RoomAvaialabilityServiceResult>> GetRoomAvailabilityByRoomType(
         string hotelId, (DateOnly from, DateOnly to) availabilityPerdiod, string roomType, bool aggregated = false);
 }
 
-public class RoomAvaialabilityResult
+public class RoomAvaialabilityServiceResult
 {
     public DateOnly Day { get; set; }
     public uint SameCountPeriod { get; set; }
@@ -102,10 +100,8 @@ public class RoomAvaialabilityResult
 public class RoomAvailabilityServiceException : Exception
 {
     public RoomAvailabilityServiceException()
-            : base(nameof(RoomAvailabilityServiceException))
-    { }
+            : base(nameof(RoomAvailabilityServiceException)) { }
 
     public RoomAvailabilityServiceException(string? message)
-      : base(message ?? nameof(RoomAvailabilityServiceException))
-    { } 
+      : base(message ?? nameof(RoomAvailabilityServiceException)) { } 
 }

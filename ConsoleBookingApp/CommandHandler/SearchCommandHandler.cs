@@ -7,7 +7,7 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
 {
     private readonly IRoomAvailabilityService _roomAvailabilityService = roomAvailabilityService;
 
-    public async override Task<CommandHandlerResult> HandleAsync(string[] parameters)
+    public async override Task<ICommandHandlerResult> HandleAsync(string[] parameters)
     {
         try
         {
@@ -58,7 +58,7 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
         }
         catch (SearchCommandHandlerParseException ex)
         {
-            return new CommandHandlerResult
+            return new SearchCommandHandlerResult
             {
                 Success = false,
                 Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
@@ -67,7 +67,7 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
         }
         catch (SearchCommandHandlerValidateException ex)
         {
-            return new CommandHandlerResult
+            return new SearchCommandHandlerResult
             {
                 Success = false,
                 Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
@@ -76,7 +76,7 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
         }
         catch (RoomAvailabilityServiceException ex)
         {
-            return new CommandHandlerResult
+            return new SearchCommandHandlerResult
             {
                 Success = false,
                 Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
@@ -85,7 +85,7 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
         }
         catch (Exception ex)
         {
-            return new CommandHandlerResult
+            return new SearchCommandHandlerResult
             {
                 Success = false,
                 Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
@@ -154,10 +154,11 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
 
 public class SearchCommandHandlerParseException : Exception
 {
-    public SearchCommandHandlerParseException() : base(nameof(SearchCommandHandlerParseException)) {}
+    public SearchCommandHandlerParseException() 
+        : base(nameof(SearchCommandHandlerParseException)) {}
 
     public SearchCommandHandlerParseException(string? message)
-          : base(message ?? nameof(SearchCommandHandlerParseException)) {}
+        : base(message ?? nameof(SearchCommandHandlerParseException)) {}
 }
 
 public class SearchCommandHandlerValidateException : Exception
@@ -166,5 +167,5 @@ public class SearchCommandHandlerValidateException : Exception
         : base(message ?? nameof(SearchCommandHandlerValidateException)) {}
 
     public SearchCommandHandlerValidateException()
-    : base(nameof(SearchCommandHandlerValidateException)) {}
+        : base(nameof(SearchCommandHandlerValidateException)) {}
 }
