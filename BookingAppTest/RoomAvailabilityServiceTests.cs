@@ -3,10 +3,7 @@ using BookingData.Model;
 using BookingApp.Service;
 using Moq;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BookingApp.Tests
 {
@@ -24,7 +21,7 @@ namespace BookingApp.Tests
         }
 
         [Test]
-        public async Task GetRoomAvailabilityByRoomType_ShouldReturnRoomAvailability()
+        public async Task GetRoomAvailabilityByRoomTypeNotAggregated_ShouldReturnRoomAvailability()
         {
             // Arrange
             string hotelId = "123";
@@ -35,8 +32,8 @@ namespace BookingApp.Tests
             var bookings = new List<Booking>
             {
                 new Booking { RoomType = "Standard", HotelId = "123", Arrival = new DateOnly(2022, 1, 2), Departure = new DateOnly(2022, 1, 4), RoomRate = "2" },
-                new Booking { RoomType = "Standard", HotelId = "123", Arrival = new DateOnly(2022, 1, 5), Departure = new DateOnly(2022, 1, 6), RoomRate = "2"  },
-                new Booking { RoomType = "Deluxe", HotelId = "123", Arrival = new DateOnly(2022, 1, 3), Departure = new DateOnly(2022, 1, 5), RoomRate = "2"  },
+                new Booking { RoomType = "Standard", HotelId = "123", Arrival = new DateOnly(2022, 1, 5), Departure = new DateOnly(2022, 1, 6), RoomRate = "2" },
+                new Booking { RoomType = "Deluxe", HotelId = "123", Arrival = new DateOnly(2022, 1, 3), Departure = new DateOnly(2022, 1, 5), RoomRate = "2" },
                 new Booking { RoomType = "Standard", HotelId = "456", Arrival = new DateOnly(2022, 1, 1), Departure = new DateOnly(2022, 1, 3), RoomRate = "2" }
             };
 
@@ -73,18 +70,19 @@ namespace BookingApp.Tests
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count(), Is.EqualTo(7));
 
-            //var expectedAvailability = new List<RoomAvaialabilityServiceResult>
-            //{
-            //    new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 1), SameCountPeriod = 1, RoomAvailabilityCount = 1 },
-            //    new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 2), SameCountPeriod = 1, RoomAvailabilityCount = 0 },
-            //    new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 3), SameCountPeriod = 1, RoomAvailabilityCount = 0 },
-            //    new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 4), SameCountPeriod = 1, RoomAvailabilityCount = 1 },
-            //    new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 5), SameCountPeriod = 1, RoomAvailabilityCount = 0 },
-            //    new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 6), SameCountPeriod = 1, RoomAvailabilityCount = 1 },
-            //    new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 7), SameCountPeriod = 1, RoomAvailabilityCount = 1 }
-            //};
+            var expectedAvailability = new List<RoomAvaialabilityServiceResult>
+            {
+                new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 1), SameCountPeriod = 1, RoomAvailabilityCount = 1 },
+                new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 2), SameCountPeriod = 1, RoomAvailabilityCount = 0 },
+                new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 3), SameCountPeriod = 1, RoomAvailabilityCount = 0 },
+                new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 4), SameCountPeriod = 1, RoomAvailabilityCount = 0 },
+                new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 5), SameCountPeriod = 1, RoomAvailabilityCount = 0 },
+                new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 6), SameCountPeriod = 1, RoomAvailabilityCount = 0 },
+                new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 7), SameCountPeriod = 1, RoomAvailabilityCount = 1 }
+            };
 
-            //CollectionAssert.AreEqual(expectedAvailability, result);
+            CollectionAssert.AreEquivalent(expectedAvailability, result.ToList());
+            //CollectionAssert.AreEqual(expectedAvailability, result.ToList());
         }
     }
 }

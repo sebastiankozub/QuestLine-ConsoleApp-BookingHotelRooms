@@ -1,4 +1,5 @@
 ﻿using BookingData;
+using System.Xml.Linq;
 
 namespace BookingApp.Service;
 
@@ -32,7 +33,7 @@ public class RoomAvailabilityService(IDataContext dataContext) : BookingAppServi
             var hotelAvailabilityPerDay = Enumerable.Repeat(hotelAvailability, dates.Count);
 
             var roomAvailability = hotelAvailabilityPerDay
-                .Zip(bookingsByDay, (a, b) => new RoomAvaialabilityServiceResult { Day = b.Date, SameCountPeriod = 1, RoomAvailabilityCount = a - b.BookingCount });
+                .Zip(bookingsByDay, (a, b) => new RoomAvaialabilityServiceResult(b.Date, 1, a - b.BookingCount));
 
             if (aggregated)            
                 return AggregateAvailabilityByDate(roomAvailability);            
@@ -72,12 +73,19 @@ public class RoomAvailabilityService(IDataContext dataContext) : BookingAppServi
                 var sameCountPeriod = lastAdded.SameCountPeriod;
                 sameCountPeriod++;
 
+                RoomAvaialabilityServiceResult roomAvaialabilityServiceResult = new RoomAvaialabilityServiceResult();
+
                 for (int i = (int)(sameCountPeriod - 1); i > 0; i--)
-                    acc[^i].SameCountPeriod = sameCountPeriod;
+                {
+                    var sameCountGroupItem = acc[acc.Count - i];
+                    roomAvaialabilityServiceResult = new RoomAvaialabilityServiceResult(sameCountGroupItem.Day, sameCountPeriod, sameCountGroupItem.RoomAvailabilityCount);
+                    acc[acc.Count - i] = roomAvaialabilityServiceResult;
+                }
 
-                current.SameCountPeriod = sameCountPeriod;
-
-                acc.Add(current);
+                acc.Add(new RoomAvaialabilityServiceResult(
+                    current.Day,
+                    roomAvaialabilityServiceResult.SameCountPeriod, 
+                    current.RoomAvailabilityCount ));
             }
             return acc;
         });
@@ -90,12 +98,42 @@ public interface IRoomAvailabilityService
         string hotelId, (DateOnly from, DateOnly to) availabilityPerdiod, string roomType, bool aggregated = false);
 }
 
-public class RoomAvaialabilityServiceResult
+public struct RoomAvaialabilityServiceResult(DateOnly day, uint sameCountPeriod, int roomAvailabilityCount)
 {
-    public DateOnly Day { get; set; }
-    public uint SameCountPeriod { get; set; }
-    public int RoomAvailabilityCount { get; set; }
+    public DateOnly Day = day;
+    public uint SameCountPeriod = sameCountPeriod;
+    public int RoomAvailabilityCount = roomAvailabilityCount;
+    //public long RoomAvaialabilityUniqueCode = (new Random()).NextInt64();
 }
+
+
+//public class RoomAvaialabilityServiceResult : IEquatable<RoomAvaialabilityServiceResult>
+//{
+//    public DateOnly Day { get; set; }
+//    public uint SameCountPeriod { get; set; }
+//    public int RoomAvailabilityCount { get; set; }
+//    public long RoomUniqueCode = (new Random()).NextInt64();
+
+//    public bool Equals(RoomAvaialabilityServiceResult? other)
+//    {
+//        if (other == null) 
+//            return false;
+
+//        return Day == other.Day 
+//            && SameCountPeriod == other.SameCountPeriod 
+//            && RoomAvailabilityCount == other.RoomAvailabilityCount;
+//    }
+
+//    public override bool Equals(object? obj)
+//    {
+//        return Equals(obj as RoomAvaialabilityServiceResult);
+//    }
+
+//    public override int GetHashCode()
+//    {
+//        return HashCode.Combine<DateOnly, uint, int, long>(Day, SameCountPeriod, RoomAvailabilityCount, RoomUniqueCode);
+//    }
+//}
 
 public class RoomAvailabilityServiceException : Exception
 {
