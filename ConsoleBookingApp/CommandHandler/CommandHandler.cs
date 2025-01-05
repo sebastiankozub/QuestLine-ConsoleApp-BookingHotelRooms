@@ -17,5 +17,15 @@ public abstract class CommandHandler(string defaultCommandName) : ICommandHandle
     protected readonly string _defaultCommandName = defaultCommandName;
 
     public abstract Task<ICommandHandlerResult> HandleAsync(string[] parameters);
+
+    protected T HandleExceptionMessage<T>(Exception ex) where T : CommandHandlerResult, new()
+    {
+        return  new T
+        {
+            Success = false,
+            Message = $"Executing user command [{DefaultCommandName}] finieshed with error.",
+            ExceptionMessage = ex.Message
+        };
+    }
 }
 

@@ -56,41 +56,11 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
 
             return new SearchCommandHandlerResult { Success = true, ResultData = outputBuilder.ToString() };
         }
-        catch (SearchCommandHandlerParseException ex)
+        catch (Exception ex) when (ex is SearchCommandHandlerParseException 
+            || ex is SearchCommandHandlerValidateException 
+            || ex is RoomAvailabilityServiceException)
         {
-            return new SearchCommandHandlerResult
-            {
-                Success = false,
-                Message = $"Executing user command [{DefaultCommandName}] finieshed with error.",
-                ExceptionMessage = ex.Message
-            };
-        }
-        catch (SearchCommandHandlerValidateException ex)
-        {
-            return new SearchCommandHandlerResult
-            {
-                Success = false,
-                Message = $"Executing user command [{DefaultCommandName}] finieshed with error.",
-                ExceptionMessage = ex.Message
-            };
-        }
-        catch (RoomAvailabilityServiceException ex)
-        {
-            return new SearchCommandHandlerResult
-            {
-                Success = false,
-                Message = $"Executing user command [{DefaultCommandName}] finieshed with error.",
-                ExceptionMessage = ex.Message
-            };
-        }
-        catch (Exception ex)
-        {
-            return new SearchCommandHandlerResult
-            {
-                Success = false,
-                Message = $"Executing user command [{DefaultCommandName}] finieshed with error.",
-                ExceptionMessage = ex.Message
-            };
+            return HandleExceptionMessage<SearchCommandHandlerResult>(ex);
         }
     }
 
@@ -135,7 +105,7 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
         var numberOfDaysAhead = int.TryParse(days, out var n) ? n : throw new SearchCommandHandlerParseException();
 
         if (numberOfDaysAhead < 1)
-            throw new SearchCommandHandlerParseException("You cannot search for a room availability in the past. Use positive number to number of days ahead.");
+            throw new SearchCommandHandlerParseException("You cannot search for a room availability in the past. Use positive number to number of days ahead or use {Availaility} command.");
 
         DateOnly from = GetTommorowUtcDateOnly();
         DateOnly to = from.AddDays(numberOfDaysAhead - 1);

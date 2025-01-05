@@ -20,23 +20,23 @@ There is room (or need) for more layers - for example:
 3. EntryPoint, Configuration, DI - split the responsibilities more & move some to class library projects to avoid dependencies eg. registering extension method AddDataContext()
 
 
-
 TODO MUST-TO:
 -------------
 
 0! business logic in services and handlers - DONE
+
 0! unit testing of business logic
 
-1. CommandLineHandlers:
+1. ILogger
+
+2. CommandLineHandlers:
 - change to ICommandHandler - in this layer code cannot have anything common with command line console - DONE
 - generic ones like: search, availability - collect into collection at the begining of the app - REFACTOR different approach to di configuration
 - easier/cleaner code to maintain in few areas then
 - CommandLineHandlerData - inherited to create common base imput poco parameter for Handle(CommandLineHandlerData commandData) method
 
-2.CONFIG JSON
+3. CONFIG JSON + Command Aliases class
 - use dictionary collection for command aliases
-
-3. Command Aliases class
 - finish command alias mechanism - extracting to new class and unit testing
 
 4. Better Exception messages and servicing throwing - lot of repeating messages & code

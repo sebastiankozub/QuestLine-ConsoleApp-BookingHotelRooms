@@ -23,41 +23,11 @@ public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilit
 
             return new AvailabilityCommandHandlerResult { Success = true, ResultData = outputBuilder.ToString() };
         }
-        catch (AvailabilityCommandHandlerParseException ex)
+        catch (Exception ex) when (ex is AvailabilityCommandHandlerParseException
+            || ex is AvailabilityCommandHandlerValidateException
+            || ex is RoomAvailabilityServiceException)
         {
-            return new AvailabilityCommandHandlerResult
-            {
-                Success = false,
-                Message = $"Executing user command [{DefaultCommandName}] finieshed with error.",
-                ExceptionMessage = ex.Message
-            };
-        }
-        catch (AvailabilityCommandHandlerValidateException ex)
-        {
-            return new AvailabilityCommandHandlerResult
-            {
-                Success = false,
-                Message = $"Executing user command [{DefaultCommandName}] finieshed with error.",
-                ExceptionMessage = ex.Message
-            };
-        }
-        catch (RoomAvailabilityServiceException ex)
-        {
-            return new AvailabilityCommandHandlerResult
-            {
-                Success = false,
-                Message = $"Executing user command [{DefaultCommandName}] finieshed with error.",
-                ExceptionMessage = ex.Message
-            };
-        }
-        catch (Exception ex)
-        {
-            return new AvailabilityCommandHandlerResult
-            {
-                Success = false,
-                Message = $"Executing user command [{DefaultCommandName}] finieshed with error.",
-                ExceptionMessage = ex.Message
-            };
+            return HandleExceptionMessage<AvailabilityCommandHandlerResult>(ex);
         }
     }
 
