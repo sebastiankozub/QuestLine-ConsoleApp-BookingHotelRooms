@@ -9,6 +9,7 @@ public class CommandLineProcessorResult
     public string? Message { get; set; }
     public Action<int>? PostProcess { get; set; }
     public string? Result { get; set; }
+    public string? ExceptionMessage { get; set; }
 }
 
 public class EmptyCommandLineProcessorResult : CommandLineProcessorResult
@@ -16,17 +17,17 @@ public class EmptyCommandLineProcessorResult : CommandLineProcessorResult
     public EmptyCommandLineProcessorResult(string helpCommand)
     {
         Success = false;
-        Message = $"Empty command. Try {helpCommand}() to check for existing commands.";
+        ExceptionMessage = $"Empty command. Try {helpCommand}() to check for existing commands.";
         PostProcess = null;
     }
 }
 
-public class NotFoundCommandLineProcessorResult : CommandLineProcessorResult
+public class NotResolvedCommandLineProcessorResult : CommandLineProcessorResult
 {
-    public NotFoundCommandLineProcessorResult(string command)
+    public NotResolvedCommandLineProcessorResult(string fullCommand)
     {
         Success = false;
-        Message = $"Command '{command}()' not found. Try Help() to check for existing commands.";
+        ExceptionMessage = $"Command ['{fullCommand}'] not found. Try Help() to check for existing commands.";
         PostProcess = null;
     }
 }
@@ -73,7 +74,7 @@ public class InvalidFormatCommandLineProcessorResult : CommandLineProcessorResul
 {
     public InvalidFormatCommandLineProcessorResult(string helpCommand)
     {
-        Message = $"Invalid command format. Mind even empty parameter list command has to end with round brackets. Try {helpCommand}() to check for existing commands.";
+        ExceptionMessage = $"Invalid command format. Mind even empty parameter list command has to end with round brackets. Try {helpCommand}() to check for existing commands.";
         Success = false;
         PostProcess = null;
     }

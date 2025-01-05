@@ -23,7 +23,6 @@ public abstract class CommandHandler(string defaultCommandName) : ICommandHandle
         return  new T
         {
             Success = false,
-            Message = $"Executing user command [{DefaultCommandName}] finieshed with error.",
             ExceptionMessage = ex.Message
         };
     }

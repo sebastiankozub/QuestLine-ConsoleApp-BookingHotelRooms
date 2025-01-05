@@ -62,6 +62,7 @@ public class CommandLineProcessor
                 Message = commandResult.Message,
                 Success = commandResult.Success,
                 Result = commandResult.ResultData,
+                ExceptionMessage = commandResult.ExceptionMessage,
                 PostProcess = null
             };
         }
@@ -85,7 +86,7 @@ public class CommandLineProcessor
         //}
 
         else        
-            return new NotFoundCommandLineProcessorResult(givenCommand);        
+            return new NotResolvedCommandLineProcessorResult(commandLine);        
     }
     
     private bool IsAlias(string alias, out string? defaultCommand)   

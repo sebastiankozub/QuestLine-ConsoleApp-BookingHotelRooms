@@ -35,22 +35,22 @@ internal class ConsoleAppInterface(CommandLineProcessor processor, IOptions<User
                 if (commandLineProcessorResult.Success is false)
                 {
                     Console.WriteLine($"Failed to execute given command  [{commandLine}]");
-                    Console.WriteLine($"Error message: {commandLineProcessorResult.Message}");
+                    Console.WriteLine($"Error message: {commandLineProcessorResult.ExceptionMessage}");
                 }
                 else
                 {
                     Console.WriteLine($"Command: [{commandLine}] executed succesfully." + Environment.NewLine);
                     
-                    if (!string.IsNullOrEmpty(commandLineProcessorResult.Result))
-                    {
-                        Console.WriteLine("Command result: " + Environment.NewLine);
-                        Console.WriteLine(commandLineProcessorResult.Result + Environment.NewLine);
-                    }
-
                     if (!string.IsNullOrEmpty(commandLineProcessorResult.Message))
                     {
                         Console.WriteLine("Message: " + Environment.NewLine);
                         Console.WriteLine(commandLineProcessorResult.Message + Environment.NewLine);
+                    }
+
+                    if (!string.IsNullOrEmpty(commandLineProcessorResult.Result))
+                    {
+                        Console.WriteLine("Command result: " + Environment.NewLine);
+                        Console.WriteLine(commandLineProcessorResult.Result + Environment.NewLine);
                     }
                 }
 

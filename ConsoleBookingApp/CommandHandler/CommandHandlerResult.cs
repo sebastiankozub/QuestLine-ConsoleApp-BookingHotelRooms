@@ -5,7 +5,7 @@ public class CommandHandlerResult : ICommandHandlerResult
     public bool Success { get; set; }
     public string? Message { get; set; }
     public string? ExceptionMessage { get; set; }
-    public string? ResultData { get; set; }
+    public string? ResultData { get; set; }    // TODO for future possibilities of CommmandLineProcessor, ConsoleAppInterface changes string? to []string
     public Action? PostResultAction { get; set; }
 }
 
@@ -20,6 +20,6 @@ public interface ICommandHandlerResult
     bool Success { get; set; }
     string? Message { get; set; }
     public string? ExceptionMessage { get; set; }
-    string? ResultData { get; set; }
+    string? ResultData { get; set; }  
     Action? PostResultAction { get; set; }
 }
