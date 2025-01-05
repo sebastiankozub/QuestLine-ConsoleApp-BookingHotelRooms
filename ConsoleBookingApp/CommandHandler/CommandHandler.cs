@@ -12,16 +12,11 @@ public interface ICommandHandler
     string DefaultCommandName { get; }
 }
 
-public abstract class CommandHandler : ICommandHandler
+public abstract class CommandHandler(string defaultCommandName) : ICommandHandler
 {
-    public CommandHandler(string defaultCommandName)
-    { 
-        _defaultCommandName = defaultCommandName;  
-    }
-
     public string DefaultCommandName { get { return _defaultCommandName; }}
 
-    protected readonly string _defaultCommandName;
+    protected readonly string _defaultCommandName = defaultCommandName;
 
     public abstract Task<CommandHandlerResult> HandleAsync(string[] parameters);
 }

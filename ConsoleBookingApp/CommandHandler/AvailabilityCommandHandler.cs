@@ -11,11 +11,11 @@ public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilit
     {
         try
         {
-            var parsedParameters = AvailabilityCommandParse(parameters);
-            AvailabilityCommandValidate(parsedParameters.hotelId, parsedParameters.availabitlityPeriod, parsedParameters.roomType);
+            var (hotelId, availabitlityPeriod, roomType) = AvailabilityCommandParse(parameters);
+            AvailabilityCommandValidate(hotelId, availabitlityPeriod, roomType);
 
             var roomAvailabilities = await _roomAvailabilityService
-                .GetRoomAvailabilityByRoomType(parsedParameters.hotelId, parsedParameters.availabitlityPeriod, parsedParameters.roomType);
+                .GetRoomAvailabilityByRoomType(hotelId, availabitlityPeriod, roomType);
 
             var outputBuilder = new StringBuilder();
             foreach (var roomAvailabitily in roomAvailabilities)
@@ -87,7 +87,7 @@ public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilit
         {
             var dateRange = date.Split('-').Select(x => x.Trim()).ToArray();
 
-            if (dateRange.Count() != 2 || dateRange.Any(date => date.Length != 8))
+            if (dateRange.Length != 2 || dateRange.Any(date => date.Length != 8))
                 throw new AvailabilityCommandHandlerParseException();
 
             from = DateOnly.TryParseExact(dateRange[0], "yyyyMMdd", out var dateOnlyFrom) ? dateOnlyFrom : throw new AvailabilityCommandHandlerParseException();
@@ -107,40 +107,31 @@ public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilit
         if (hotelId.Length > 10 || hotelId.Length < 2)
             throw new AvailabilityCommandHandlerValidateException();
 
+        if (roomType.Length > 10 || roomType.Length < 2)
+            throw new AvailabilityCommandHandlerValidateException();
+
         //if (availabilityPerdiod.from < DateOnly.FromDateTime(DateTime.UtcNow).AddDays(1) || let search for historical data
         if (availabilityPerdiod.to < availabilityPerdiod.from)
             throw new AvailabilityCommandHandlerValidateException();
 
         return true;
     }
-
 }
 
 public class AvailabilityCommandHandlerParseException : Exception
 {
     public AvailabilityCommandHandlerParseException()
-        : base(nameof(AvailabilityCommandHandlerParseException))
-    {
-    }
+        : base(nameof(AvailabilityCommandHandlerParseException)) {}
 
     public AvailabilityCommandHandlerParseException(string? message)
-          : base(message == null ? nameof(AvailabilityCommandHandlerParseException) : message)
-    {    
-    
-    
-    }
+          : base(message ?? nameof(AvailabilityCommandHandlerParseException)) {}
 }
 
 public class AvailabilityCommandHandlerValidateException : Exception
 {
     public AvailabilityCommandHandlerValidateException(string? message)
-        : base(message == null ? nameof(AvailabilityCommandHandlerValidateException) : message)
-    {
+        : base(message ?? nameof(AvailabilityCommandHandlerValidateException)) {}
 
-
-    }
     public AvailabilityCommandHandlerValidateException()
-    : base(nameof(AvailabilityCommandHandlerValidateException))
-    {
-    }
+    : base(nameof(AvailabilityCommandHandlerValidateException)) {}
 }

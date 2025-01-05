@@ -4,12 +4,10 @@ using Microsoft.Extensions.Options;
 
 namespace ConsoleBookingApp.UserInterface;
 
-internal class ConsoleAppInterface(CommandLineProcessor processor, DataContext dataCtx, IOptions<UserInterfaceOptions> userInterfaceOptions, IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions)
+internal class ConsoleAppInterface(CommandLineProcessor processor, IOptions<UserInterfaceOptions> userInterfaceOptions, IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions)
 {
     private readonly CommandLineProcessor _cmdLineProcessor = processor;
-    private readonly DataContext _dataContext = dataCtx;
     private readonly UserInterfaceOptions _userInterfaceOptions = userInterfaceOptions.Value;
-    private readonly UserInterfaceCommandsOptions _userInterfaceCommandsOptions = userInterfaceCommandsOptions.Value;
 
     private readonly string _helpCommandName = userInterfaceCommandsOptions.Value.Help ?? nameof(UserInterfaceCommandsOptions.Help);
 
@@ -41,9 +39,17 @@ internal class ConsoleAppInterface(CommandLineProcessor processor, DataContext d
                 }
                 else
                 {
-                    Console.WriteLine($"Command: {commandLine} executed succesfully" + Environment.NewLine);
-                    Console.WriteLine("Command result: " + Environment.NewLine);
-                    Console.WriteLine(commandLineProcessorResult.Result + Environment.NewLine);
+                    Console.WriteLine($"Command: [{commandLine}] executed succesfully." + Environment.NewLine);
+                    if (!string.IsNullOrEmpty(commandLineProcessorResult.Result))
+                    {
+                        Console.WriteLine("Command result: " + Environment.NewLine);
+                        Console.WriteLine(commandLineProcessorResult.Result + Environment.NewLine);
+                    }
+                    if (!string.IsNullOrEmpty(commandLineProcessorResult.Message))
+                    {
+                        Console.WriteLine("Message: " + Environment.NewLine);
+                        Console.WriteLine(commandLineProcessorResult.Message + Environment.NewLine);
+                    }
                 }
 
                 if (commandLineProcessorResult.PostProcess is not null)

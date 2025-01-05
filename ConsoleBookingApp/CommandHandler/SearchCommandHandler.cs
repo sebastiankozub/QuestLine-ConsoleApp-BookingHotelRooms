@@ -11,11 +11,11 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
     {
         try
         {
-            var parsedParameters = SearchCommandParse(parameters);
-            SearchCommandValidate(parsedParameters.hotelId, parsedParameters.availabitlityPeriod, parsedParameters.roomType);
+            var (hotelId, availabitlityPeriod, roomType) = SearchCommandParse(parameters);
+            SearchCommandValidate(hotelId, availabitlityPeriod, roomType);
 
             var roomAvailabilities = await _roomAvailabilityService
-                .GetRoomAvailabilityByRoomType(parsedParameters.hotelId, parsedParameters.availabitlityPeriod, parsedParameters.roomType, true);
+                .GetRoomAvailabilityByRoomType(hotelId, availabitlityPeriod, roomType, true);
 
             var outputBuilder = new StringBuilder();
             var roomAvailabilitiesCount = roomAvailabilities.Count();
@@ -94,9 +94,12 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
         }
     }
 
-    private static bool SearchCommandValidate(string hotelId, (DateOnly from, DateOnly to) availabilityPerdiod, object roomType)
+    private static bool SearchCommandValidate(string hotelId, (DateOnly from, DateOnly to) availabilityPerdiod, string roomType)
     {
         if (hotelId.Length > 10 || hotelId.Length < 2)
+            throw new SearchCommandHandlerValidateException();
+
+        if (roomType.Length > 10 || roomType.Length < 2)
             throw new SearchCommandHandlerValidateException();
 
         if (availabilityPerdiod.to < availabilityPerdiod.from)
@@ -149,34 +152,19 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
     }
 }
 
-
 public class SearchCommandHandlerParseException : Exception
 {
-    public SearchCommandHandlerParseException()
-        : base(nameof(SearchCommandHandlerParseException))
-    {
-    }
+    public SearchCommandHandlerParseException() : base(nameof(SearchCommandHandlerParseException)) {}
 
     public SearchCommandHandlerParseException(string? message)
-          : base(message == null ? nameof(SearchCommandHandlerParseException) : message)
-    {
-
-
-    }
+          : base(message ?? nameof(SearchCommandHandlerParseException)) {}
 }
 
 public class SearchCommandHandlerValidateException : Exception
 {
     public SearchCommandHandlerValidateException(string? message)
-        : base(message == null ? nameof(SearchCommandHandlerValidateException) : message)
-    {
+        : base(message ?? nameof(SearchCommandHandlerValidateException)) {}
 
-
-    }
     public SearchCommandHandlerValidateException()
-    : base(nameof(SearchCommandHandlerValidateException))
-    {
-    }
+    : base(nameof(SearchCommandHandlerValidateException)) {}
 }
-
-

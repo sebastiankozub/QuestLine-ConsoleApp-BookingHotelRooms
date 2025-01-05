@@ -12,31 +12,22 @@ public class CommandLineProcessor
     private readonly string _helpCommand;
     private readonly string _exitCommand;
 
-    private readonly UserInterfaceOptions _uiOptions;
     private readonly UserInterfaceCommandsOptions _uiCommandsOptions;
 
     private readonly Action<int>? _closeApplicationAction;
 
-    //test only
-    private readonly MyFirstClass _first;
-    private readonly SecondOptions _second;
-
-    public CommandLineProcessor(ICommandLineParser parser, Dictionary<string, ICommandHandler> handlers, IOptions<UserInterfaceOptions> userInterfaceOptions, 
-                            IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions, MyFirstClass first, SecondOptions second, Action<int>? closeApplicationAction)
+    public CommandLineProcessor(ICommandLineParser parser, Dictionary<string, ICommandHandler> handlers,
+        IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions, Action<int>? closeApplicationAction)
     {
         _parser = parser;
         _commandLineHandlers = handlers;
 
-        _uiOptions = userInterfaceOptions.Value;
         _uiCommandsOptions = userInterfaceCommandsOptions.Value;
 
         _helpCommand = _uiCommandsOptions.Help ?? nameof(UserInterfaceCommandsOptions.Help);
         _exitCommand = _uiCommandsOptions.Exit ?? nameof(UserInterfaceCommandsOptions.Exit);
 
         _closeApplicationAction = closeApplicationAction;
-
-        _first = first;
-        _second = second;
     }
 
     public async Task<CommandLineProcessorResult> ProcessCommandAsync(string commandLine)  
@@ -74,8 +65,8 @@ public class CommandLineProcessor
             };
         }
 
-        // snippet to get transient every user command triggered
-        //
+        // TODO  -- change dictionary and handlers to real transient - now registered as transient but work like singleton
+
         //using (var scope = _serviceProvider.CreateScope())
         //{
         //    var handlers = scope.ServiceProvider.GetServices<ICommandHandler>();
@@ -102,7 +93,7 @@ public class CommandLineProcessor
         var aliasFound = false;
         defaultCommand = null;
 
-        if (_uiCommandsOptions.Search == alias)
+        if (_uiCommandsOptions.Search == alias)  // add aliases as a json dictionary to foreach them
         {
             defaultCommand = "Search";
             aliasFound = true;

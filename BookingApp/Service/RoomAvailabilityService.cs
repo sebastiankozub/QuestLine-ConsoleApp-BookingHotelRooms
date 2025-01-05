@@ -1,5 +1,4 @@
 ﻿using BookingData;
-using System.Linq;
 
 namespace BookingApp.Service;
 
@@ -28,7 +27,7 @@ public class RoomAvailabilityService(DataContext dataContext) : BookingAppServic
             var roomsOfGivenType = hotel.Rooms.Count(room => room.RoomType == roomType);
 
             var hotelAvailability = roomsOfGivenType == 0 ?
-                throw new RoomAvailabilityServiceException($"Hotel with given id {hotelId} does not offer any room type {roomType}") : roomsOfGivenType;
+                throw new RoomAvailabilityServiceException($"Hotel with given id {hotelId} does not offer any room of type {roomType}") : roomsOfGivenType;
 
             var hotelAvailabilityPerDay = Enumerable.Repeat(hotelAvailability, dates.Count);
 
@@ -37,27 +36,7 @@ public class RoomAvailabilityService(DataContext dataContext) : BookingAppServic
 
             if (aggregated)
             {
-                return roomAvailability.Aggregate(new List<RoomAvaialabilityResult>(), (acc, current) =>
-                {
-                    if (acc.Count == 0 || acc.Last().RoomAvailabilityCount != current.RoomAvailabilityCount)
-                    {
-                        acc.Add(current);
-                    }
-                    else
-                    {
-                        var lastAdded = acc.Last();
-                        var sameCountPeriod = lastAdded.SameCountPeriod;
-                        sameCountPeriod++;
-
-                        for (int i = (int)(sameCountPeriod - 1); i > 0; i--)
-                            acc[acc.Count - i].SameCountPeriod = sameCountPeriod;
-
-                        current.SameCountPeriod = sameCountPeriod;
-
-                        acc.Add(current);
-                    }
-                    return acc;
-                });
+                return AggregateAvailabilityByDate(roomAvailability);
             }
             else
                 return roomAvailability;
@@ -79,6 +58,31 @@ public class RoomAvailabilityService(DataContext dataContext) : BookingAppServic
         return  Enumerable.Range(0, daysCount)
             .Select(offset => from.AddDays(offset))
             .ToList();
+    }
+
+    private static List<RoomAvaialabilityResult> AggregateAvailabilityByDate(IEnumerable<RoomAvaialabilityResult> roomAvailability)
+    {
+        return roomAvailability.Aggregate(new List<RoomAvaialabilityResult>(), (acc, current) =>
+        {
+            if (acc.Count == 0 || acc.Last().RoomAvailabilityCount != current.RoomAvailabilityCount)
+            {
+                acc.Add(current);
+            }
+            else
+            {
+                var lastAdded = acc.Last();
+                var sameCountPeriod = lastAdded.SameCountPeriod;
+                sameCountPeriod++;
+
+                for (int i = (int)(sameCountPeriod - 1); i > 0; i--)
+                    acc[^i].SameCountPeriod = sameCountPeriod;
+
+                current.SameCountPeriod = sameCountPeriod;
+
+                acc.Add(current);
+            }
+            return acc;
+        });
     }
 }
 
