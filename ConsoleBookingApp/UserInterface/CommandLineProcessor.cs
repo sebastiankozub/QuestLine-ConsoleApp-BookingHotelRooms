@@ -52,7 +52,7 @@ public class CommandLineProcessor
         // TODO refactor to use CommandLineAliasResolver or better naming BookingAppAliasResolver : IAliasResolver?
         // given command or alias Resolve() return default command string  - null reference warning also cleaned then
         if ((IsAlias(givenCommand, out var commandFromAlias) 
-            && _commandLineHandlers.TryGetValue(commandFromAlias, out var commandHandler))
+            && _commandLineHandlers.TryGetValue(commandFromAlias, out var commandHandler))  // not possible to null reference exception
             || _commandLineHandlers.TryGetValue(givenCommand, out commandHandler))  
         {
             var commandResult = await commandHandler.HandleAsync(givenParameters);
@@ -67,7 +67,9 @@ public class CommandLineProcessor
             };
         }
 
-        // TODO  -- change dictionary and handlers to real transient - now registered as transient but work like singleton
+        // TODO -- change dictionary and handlers to real transient
+        // now registered as transient but work like singleton
+        // not a problem for console app but maybe some day we want ICommandHandlers be triggered from different places
 
         //using (var scope = _serviceProvider.CreateScope())
         //{
@@ -85,7 +87,7 @@ public class CommandLineProcessor
         //    }
         //}
 
-        else        
+        else
             return new NotResolvedCommandLineProcessorResult(commandLine);        
     }
     

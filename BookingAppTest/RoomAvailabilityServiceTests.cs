@@ -5,7 +5,7 @@ using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
 
-namespace BookingApp.Tests
+namespace BookingAppTest
 {
     [TestFixture]
     public class RoomAvailabilityServiceTests
@@ -31,32 +31,33 @@ namespace BookingApp.Tests
 
             var bookings = new List<Booking>
             {
-                new Booking { RoomType = "Standard", HotelId = "123", Arrival = new DateOnly(2022, 1, 2), Departure = new DateOnly(2022, 1, 4), RoomRate = "2" },
-                new Booking { RoomType = "Standard", HotelId = "123", Arrival = new DateOnly(2022, 1, 5), Departure = new DateOnly(2022, 1, 6), RoomRate = "2" },
-                new Booking { RoomType = "Deluxe", HotelId = "123", Arrival = new DateOnly(2022, 1, 3), Departure = new DateOnly(2022, 1, 5), RoomRate = "2" },
-                new Booking { RoomType = "Standard", HotelId = "456", Arrival = new DateOnly(2022, 1, 1), Departure = new DateOnly(2022, 1, 3), RoomRate = "2" }
+                new() { RoomType = "Standard", HotelId = "123", Arrival = new DateOnly(2022, 1, 2), Departure = new DateOnly(2022, 1, 4), RoomRate = "2" },
+                new() { RoomType = "Standard", HotelId = "123", Arrival = new DateOnly(2022, 1, 5), Departure = new DateOnly(2022, 1, 6), RoomRate = "2" },
+                new() { RoomType = "Deluxe",   HotelId = "123", Arrival = new DateOnly(2022, 1, 3), Departure = new DateOnly(2022, 1, 5), RoomRate = "2" },
+                new() { RoomType = "Standard", HotelId = "456", Arrival = new DateOnly(2022, 1, 1), Departure = new DateOnly(2022, 1, 3), RoomRate = "2" }
             };
 
             var hotels = new List<Hotel>
             {
-                new Hotel { Id = "123", Name = "California", Rooms = new List<Room> { new Room { RoomId = "100", RoomType = "Standard" }, new Room { RoomId = "110", RoomType = "Deluxe" } },
-                RoomTypes = new List<RoomType> {
-                    new RoomType {
-                            Amenities = ["All"],
-                            Code = "Standard",
-                            Description = "Standard",
-                            Features = ["F1"]                    
-                    }
-                } },
-                new Hotel { Id = "456", Name = "MoonNewCalifornia", Rooms = new List<Room> { new Room { RoomId = "100", RoomType = "ExtraOxygen" } },
-                    RoomTypes = new List<RoomType> { 
-                        new RoomType { 
+                new () { Id = "123", Name = "California", Rooms = [ new() { RoomId = "100", RoomType = "Standard" }, new Room { RoomId = "110", RoomType = "Deluxe" } ],
+                    RoomTypes = [
+                        new () {
+                                Amenities = ["All"],
+                                Code = "Standard",
+                                Description = "Standard",
+                                Features = ["F1"]
+                        }
+                    ]
+                },
+                new () { Id = "456", Name = "MoonIsNewCalifornia", Rooms = [ new() { RoomId = "100", RoomType = "ExtraOxygen" } ],
+                    RoomTypes = [
+                        new () {
                             Amenities = ["All"],
                             Code = "Standard",
                             Description = "Standard",
                             Features = ["F1"]
-                        } 
-                    } 
+                        }
+                    ]
                 }
             };
 
@@ -72,17 +73,17 @@ namespace BookingApp.Tests
 
             var expectedAvailability = new List<RoomAvaialabilityServiceResult>
             {
-                new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 1), SameCountPeriod = 1, RoomAvailabilityCount = 1 },
-                new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 2), SameCountPeriod = 1, RoomAvailabilityCount = 0 },
-                new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 3), SameCountPeriod = 1, RoomAvailabilityCount = 0 },
-                new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 4), SameCountPeriod = 1, RoomAvailabilityCount = 0 },
-                new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 5), SameCountPeriod = 1, RoomAvailabilityCount = 0 },
-                new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 6), SameCountPeriod = 1, RoomAvailabilityCount = 0 },
-                new RoomAvaialabilityServiceResult { Day = new DateOnly(2022, 1, 7), SameCountPeriod = 1, RoomAvailabilityCount = 1 }
+                new () { Day = new DateOnly(2022, 1, 1), SameCountPeriod = 1, RoomAvailabilityCount = 1 },
+                new () { Day = new DateOnly(2022, 1, 2), SameCountPeriod = 1, RoomAvailabilityCount = 0 },
+                new () { Day = new DateOnly(2022, 1, 3), SameCountPeriod = 1, RoomAvailabilityCount = 0 },
+                new () { Day = new DateOnly(2022, 1, 4), SameCountPeriod = 1, RoomAvailabilityCount = 0 },
+                new () { Day = new DateOnly(2022, 1, 5), SameCountPeriod = 1, RoomAvailabilityCount = 0 },
+                new () { Day = new DateOnly(2022, 1, 6), SameCountPeriod = 1, RoomAvailabilityCount = 0 },
+                new () { Day = new DateOnly(2022, 1, 7), SameCountPeriod = 1, RoomAvailabilityCount = 1 }
             };
 
             CollectionAssert.AreEquivalent(expectedAvailability, result.ToList());
-            //CollectionAssert.AreEqual(expectedAvailability, result.ToList());
+            CollectionAssert.AreEqual(expectedAvailability, result.ToList());
         }
     }
 }

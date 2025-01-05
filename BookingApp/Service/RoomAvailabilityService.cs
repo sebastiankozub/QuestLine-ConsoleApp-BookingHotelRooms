@@ -1,4 +1,5 @@
 ﻿using BookingData;
+using System.Collections.ObjectModel;
 using System.Xml.Linq;
 
 namespace BookingApp.Service;
@@ -9,54 +10,62 @@ public class RoomAvailabilityService(IDataContext dataContext) : BookingAppServi
     {
         var bookings = _dataContext.Bookings;
         var hotels = _dataContext.Hotels;
-        
-        return await Task<IEnumerable<RoomAvaialabilityServiceResult>>.Run(() =>
+
+        try
         {
-            var dates = ListOfDates(availabilityPerdiod.from, availabilityPerdiod.to);
 
-            var bookingsByDay = dates.Select(date => new
+            return await Task<IEnumerable<RoomAvaialabilityServiceResult>>.Run(() =>
             {
-                Date = date,
-                BookingCount = bookings
-                    .Where(b => b.RoomType == roomType && b.HotelId == hotelId && b.Arrival <= date && b.Departure >= date)
-                    .Count()
+                var dates = ListOfDates(availabilityPerdiod.from, availabilityPerdiod.to);
+
+                var bookingsByDay = dates.Select(date => new
+                {
+                    Date = date,
+                    BookingCount = bookings
+                        .Where(b => b.RoomType == roomType && b.HotelId == hotelId && b.Arrival <= date && b.Departure >= date)
+                        .Count()
+                });
+
+                var hotel = hotels.SingleOrDefault(hotel => hotel.Id == hotelId) ??
+                    throw new RoomAvailabilityServiceException($"Hotel with given id {hotelId} not found");
+
+                var roomsOfGivenType = hotel.Rooms.Count(room => room.RoomType == roomType);
+
+                var hotelAvailability = roomsOfGivenType == 0 ?
+                    throw new RoomAvailabilityServiceException($"Hotel with given id {hotelId} does not offer any room of type {roomType}") : roomsOfGivenType;
+
+                var hotelAvailabilityPerDay = Enumerable.Repeat(hotelAvailability, dates.Count);
+
+                var roomAvailability = hotelAvailabilityPerDay
+                    .Zip(bookingsByDay, (a, b) => new RoomAvaialabilityServiceResult(b.Date, 1, a - b.BookingCount));
+
+                if (aggregated)
+                    return AggregateAvailabilityByDate(roomAvailability);
+                else
+                    return roomAvailability;
             });
-
-            var hotel = hotels.SingleOrDefault(hotel => hotel.Id == hotelId) ??
-                throw new RoomAvailabilityServiceException($"Hotel with given id {hotelId} not found");
-
-            var roomsOfGivenType = hotel.Rooms.Count(room => room.RoomType == roomType);
-
-            var hotelAvailability = roomsOfGivenType == 0 ?
-                throw new RoomAvailabilityServiceException($"Hotel with given id {hotelId} does not offer any room of type {roomType}") : roomsOfGivenType;
-
-            var hotelAvailabilityPerDay = Enumerable.Repeat(hotelAvailability, dates.Count);
-
-            var roomAvailability = hotelAvailabilityPerDay
-                .Zip(bookingsByDay, (a, b) => new RoomAvaialabilityServiceResult(b.Date, 1, a - b.BookingCount));
-
-            if (aggregated)            
-                return AggregateAvailabilityByDate(roomAvailability);            
-            else
-                return roomAvailability;
-        });
+        }
+        catch (Exception exception)
+        {
+            throw new RoomAvailabilityServiceException(exception.Message);
+        }
     }
 
-    public static List<DateOnly> ListOfDates(DateOnly from, DateOnly to)
+    public static ReadOnlyCollection<DateOnly> ListOfDates(DateOnly from, DateOnly to)
     {
         var days = new List<DateOnly>();
         for (var day = from; day <= to; day = day.AddDays(1))
         {
             days.Add(day);
         }
-        return days;
+        return new ReadOnlyCollection<DateOnly>(days);
     }
 
-    public static List<DateOnly> ListOfDates(DateOnly from, int daysCount)
+    public static ReadOnlyCollection<DateOnly> ListOfDates(DateOnly from, int daysCount)
     {
-        return  Enumerable.Range(0, daysCount)
+        return new ReadOnlyCollection<DateOnly>(Enumerable.Range(0, daysCount)
             .Select(offset => from.AddDays(offset))
-            .ToList();
+            .ToList());
     }
 
     private static List<RoomAvaialabilityServiceResult> AggregateAvailabilityByDate(IEnumerable<RoomAvaialabilityServiceResult> roomAvailability)
@@ -73,7 +82,7 @@ public class RoomAvailabilityService(IDataContext dataContext) : BookingAppServi
                 var sameCountPeriod = lastAdded.SameCountPeriod;
                 sameCountPeriod++;
 
-                RoomAvaialabilityServiceResult roomAvaialabilityServiceResult = new RoomAvaialabilityServiceResult();
+                RoomAvaialabilityServiceResult roomAvaialabilityServiceResult = new ();
 
                 for (int i = (int)(sameCountPeriod - 1); i > 0; i--)
                 {

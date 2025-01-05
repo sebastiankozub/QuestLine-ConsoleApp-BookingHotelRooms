@@ -18,7 +18,7 @@ public abstract class CommandHandler(string defaultCommandName) : ICommandHandle
 
     public abstract Task<ICommandHandlerResult> HandleAsync(string[] parameters);
 
-    protected T HandleExceptionMessage<T>(Exception ex) where T : CommandHandlerResult, new()
+    protected static T HandleExceptionMessage<T>(Exception ex) where T : CommandHandlerResult, new()
     {
         return  new T
         {
