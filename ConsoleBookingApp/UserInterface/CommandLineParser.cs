@@ -5,12 +5,12 @@ namespace ConsoleBookingApp.UserInterface;
 
 public interface ICommandLineParser
 {
-    (string? CommandName, string[] Parameters) Parse(string command);
+    (string CommandName, string[] Parameters) Parse(string command);
 }
 
 public class CommandLineParser : ICommandLineParser
 {
-    public (string? CommandName, string[] Parameters) Parse(string command)
+    public (string CommandName, string[] Parameters) Parse(string command)
     {
         string pattern = @"^(\w+)\(([^)]*)\)$";
         Match match = Regex.Match(command.Trim(), pattern);
@@ -24,7 +24,7 @@ public class CommandLineParser : ICommandLineParser
         }
         else
         {
-            return (null, []);
+            return ("", []);
         }
     }
 }

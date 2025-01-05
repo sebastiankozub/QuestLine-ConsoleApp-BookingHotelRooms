@@ -1,5 +1,4 @@
 ﻿using ConsoleBookingApp.Configuration;
-using BookingData;
 using Microsoft.Extensions.Options;
 
 namespace ConsoleBookingApp.UserInterface;
@@ -20,16 +19,17 @@ internal class ConsoleAppInterface(CommandLineProcessor processor, IOptions<User
                 Console.WriteLine("CONSOLE BOOKING APP");
                 Console.WriteLine("-------------------");
 
-                // TODO abstract to different place Console class calls - ones like below
-                // TODO create Display abstraction to Console Read and Write be used as an interface
-                Console.WriteLine($"Type {_helpCommandName}() for quick help or use favorite known command!");
+                // TODO abstract to different place Console class calls - ones like below and above
+                // TODO create interface Display and Read, create wrapper Console Read and Write be used as an interface to be mocked and test ui logic
+
+                Console.WriteLine($"Type {_helpCommandName}() for quick help or use favorite known command!"); //TODO AliasResolver
                 Console.WriteLine();
                 Console.Write(_userInterfaceOptions.CommandPrompt);  
 
                 var commandLine = Console.ReadLine();
 
-                var commandLineProcessorResult = string.IsNullOrEmpty(commandLine) ?
-                    await _cmdLineProcessor.ProcessCommandAsync("")
+                var commandLineProcessorResult = string.IsNullOrEmpty(commandLine) 
+                    ? await _cmdLineProcessor.ProcessCommandAsync("")
                     : await _cmdLineProcessor.ProcessCommandAsync(commandLine);
 
                 if (commandLineProcessorResult.Success is false)

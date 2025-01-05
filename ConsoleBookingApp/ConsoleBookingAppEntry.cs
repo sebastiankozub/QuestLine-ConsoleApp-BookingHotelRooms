@@ -52,7 +52,7 @@ internal class ConsoleBookingAppEntry
             // CONSOLE APP DOMAIN
             services
                 .AddSingleton<ICommandLineParser, CommandLineParser>()
-                .AddSingleton<ConsoleAppArgsParser>()
+                .AddSingleton<ConsoleBookingAppArgsParser>()
                 .AddSingleton(new Action<int>(ExitApplication))
                 .AddSingleton<CommandLineProcessor>()
                 .AddSingleton(sp => {
@@ -62,7 +62,7 @@ internal class ConsoleBookingAppEntry
 
             services
                 .AddSingleton(sp => {
-                    var consoleArgsParser = sp.GetRequiredService<ConsoleAppArgsParser>();
+                    var consoleArgsParser = sp.GetRequiredService<ConsoleBookingAppArgsParser>();
                     var (hotelsFilename, bookingsFilname) = consoleArgsParser.Parse();
                     var dataContext = new DataContext(hotelsFilename, bookingsFilname);
                     return dataContext;

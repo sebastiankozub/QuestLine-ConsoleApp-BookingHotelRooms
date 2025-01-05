@@ -55,7 +55,7 @@ public class DataContext
         };
     }
 
-    private async Task SaveHotelsToJsonAsync()
+    private async Task SaveHotelsToJsonAsync()  // looks like Save() chunks can be done as a generic methods
     {
         using var hotelsWriter = new StreamWriter(_hotelRepositoryFilename);
         await hotelsWriter.WriteAsync(JsonSerializer.Serialize(Hotels, JsonDataFileSerializerOptions()));

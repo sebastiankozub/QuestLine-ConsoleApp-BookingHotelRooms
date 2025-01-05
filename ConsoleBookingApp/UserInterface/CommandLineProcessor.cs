@@ -32,10 +32,12 @@ public class CommandLineProcessor
 
     public async Task<CommandLineProcessorResult> ProcessCommandAsync(string commandLine)  
     {
-        if(string.IsNullOrEmpty(commandLine))        
-            return new EmptyCommandLineProcessorResult(_helpCommand);
-        
         var (givenCommand, givenParameters) = _parser.Parse(commandLine);
+
+        if (string.IsNullOrEmpty(commandLine))
+            // return new EmptyCommandLineProcessorResult(_helpCommand);
+            // fulfilling one of task description constraints - maybe alias functionality when refactored will be better?
+            return new ExitCommandLineProcessorResult(givenCommand, _closeApplicationAction); 
 
         if (givenCommand == null)        
             return new InvalidFormatCommandLineProcessorResult(_helpCommand);        
@@ -47,7 +49,6 @@ public class CommandLineProcessor
             return new ExitCommandLineProcessorResult(givenCommand, _closeApplicationAction);
 
         // TODO The Dictionary is a list of Transient instances but not reinstatined as new transient but taken instantinated from dictionaty
-
         // TODO refactor to use CommandLineAliasResolver or better naming BookingAppAliasResolver : IAliasResolver?
         // given command or alias Resolve() return default command string  - null reference warning also cleaned then
         if ((IsAlias(givenCommand, out var commandFromAlias) 
@@ -93,7 +94,7 @@ public class CommandLineProcessor
         var aliasFound = false;
         defaultCommand = null;
 
-        if (_uiCommandsOptions.Search == alias)  // add aliases as a json dictionary to foreach them
+        if (_uiCommandsOptions.Search == alias)  // add aliases to config as a json dictionary to foreach them
         {
             defaultCommand = "Search";
             aliasFound = true;

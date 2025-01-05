@@ -1,14 +1,14 @@
-﻿namespace ConsoleBookingApp.UserInterface;
+﻿namespace ConsoleBookingApp;
 
-internal class ConsoleAppArgsParser   // auxilly to strongly conneted to BookingApp logic to have such generic name
-                                      // with the current name should be generic class paramerized with or using BookingConsoleAppArgsParserOptions/
+internal class ConsoleBookingAppArgsParser
+// too strongly conneted to BookingApp logic - finally want generic version to read args in other app also                                      
 {
     private readonly string[] _args;
 
     private readonly string _hotelsArgsSwitch;
     private readonly string _bookingsArgsSwitch;
 
-    public ConsoleAppArgsParser(ConsoleAppArgs runCommandArgs)
+    public ConsoleBookingAppArgsParser(ConsoleAppArgs runCommandArgs)
     {
         if (runCommandArgs.args == null || runCommandArgs.args.Length < 4)
             throw new ArgumentException("Command line arguments not satisfied. Run app with proper --bookings and --hotels parameters' values.");
@@ -25,7 +25,7 @@ internal class ConsoleAppArgsParser   // auxilly to strongly conneted to Booking
         var bookingRepositoryFilename = GetParameterValue(_bookingsArgsSwitch);
 
         if (hotelRepositoryFilename is null || bookingRepositoryFilename is null)
-            throw new ArgumentException("One or more underlying datafile names not given properly.");
+            throw new ArgumentException("One or more underlying datafile names or parameters' switch not given properly.");
 
         return (hotelRepositoryFilename, bookingRepositoryFilename);
     }
