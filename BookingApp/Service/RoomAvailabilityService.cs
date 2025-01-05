@@ -2,7 +2,7 @@
 
 namespace BookingApp.Service;
 
-public class RoomAvailabilityService(DataContext dataContext) : BookingAppService(dataContext), IRoomAvailabilityService
+public class RoomAvailabilityService(IDataContext dataContext) : BookingAppService(dataContext), IRoomAvailabilityService
 {
     public async Task<IEnumerable<RoomAvaialabilityServiceResult>> GetRoomAvailabilityByRoomType(string hotelId, (DateOnly from, DateOnly to) availabilityPerdiod, string roomType, bool aggregated = false)
     {

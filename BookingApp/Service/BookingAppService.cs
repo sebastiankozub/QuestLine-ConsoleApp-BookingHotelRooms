@@ -2,9 +2,9 @@
 
 namespace BookingApp.Service
 {
-    public abstract class BookingAppService(DataContext dataContext) : IBookingAppService
+    public abstract class BookingAppService(IDataContext dataContext) : IBookingAppService
     {
-        protected readonly DataContext _dataContext = dataContext;
+        protected readonly IDataContext _dataContext = dataContext;
     }
 
     interface IBookingAppService

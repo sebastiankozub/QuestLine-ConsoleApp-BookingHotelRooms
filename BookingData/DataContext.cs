@@ -3,12 +3,19 @@ using BookingData.Model;
 
 namespace BookingData;
 
-public class DataContext
+public interface IDataContext
+{
+    IList<Hotel> Hotels { get; }
+    IList<Booking> Bookings { get; }
+    Task Initialization { get; }
+}
+
+public class DataContext : IDataContext
 {
     // when JsonFileDataStorage will be added List<> will be changed into generic repository
     // to handle save to underlying storage or save on the fly when entity added
-    public List<Hotel> Hotels { get; private set; } = [];  
-    public List<Booking> Bookings { get; private set; } = [];
+    public IList<Hotel> Hotels { get; private set; } = [];  
+    public IList<Booking> Bookings { get; private set; } = [];
     
     public DataContext(string hotelRepositoryFilename, string bookingRepositoryFilename)
     {

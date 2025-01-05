@@ -61,14 +61,14 @@ internal class ConsoleBookingAppEntry
                 });
 
             services
-                .AddSingleton(sp => {
+                .AddSingleton<IDataContext>(sp => {
                     var consoleArgsParser = sp.GetRequiredService<ConsoleBookingAppArgsParser>();
                     var (hotelsFilename, bookingsFilname) = consoleArgsParser.Parse();
                     var dataContext = new DataContext(hotelsFilename, bookingsFilname);
                     return dataContext;
                 });
 
-            // CONSOLE COMMAND HANDLERS
+            // CONSOLE COMMAND HANDLERS   // TODO - make real transient
             var commandLineHandlers = typeof(ConsoleBookingAppEntry).Assembly.GetTypes()
                 .Where(x => !x.IsAbstract && x.IsClass && x.GetInterface(nameof(ICommandHandler)) == typeof(ICommandHandler));
             foreach (var commandLineHandler in commandLineHandlers)
@@ -85,7 +85,7 @@ internal class ConsoleBookingAppEntry
             var serviceProvider = services.BuildServiceProvider();
 
             // DATA LAYER INITIALIZATION                     
-            var dataContext = serviceProvider.GetRequiredService<DataContext>();  // TODO check NuGet/HostInitActions for asyncronous initialization
+            var dataContext = serviceProvider.GetRequiredService<IDataContext>();  // TODO check NuGet/HostInitActions for asyncronous initialization
             await dataContext.Initialization;
 
             // RUN
