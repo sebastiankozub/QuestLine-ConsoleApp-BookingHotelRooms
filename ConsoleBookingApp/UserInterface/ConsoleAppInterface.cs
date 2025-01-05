@@ -20,28 +20,29 @@ internal class ConsoleAppInterface(CommandLineProcessor processor, DataContext d
             try
             {
                 Console.WriteLine("CONSOLE BOOKING APP");
+                Console.WriteLine("-------------------");
 
-                // TODO abstract to different place Console class calls - ones like above and below
+                // TODO abstract to different place Console class calls - ones like below
                 // TODO create Display abstraction to Console Read and Write be used as an interface
-
                 Console.WriteLine($"Type {_helpCommandName}() for quick help or use favorite known command!");
                 Console.WriteLine();
                 Console.Write(_userInterfaceOptions.CommandPrompt);  
 
                 var commandLine = Console.ReadLine();
 
-                var commandLineProcessorResult = await _cmdLineProcessor.ProcessCommandAsync(string.IsNullOrEmpty(commandLine) ? "" : commandLine);
+                var commandLineProcessorResult = string.IsNullOrEmpty(commandLine) ?
+                    await _cmdLineProcessor.ProcessCommandAsync("")
+                    : await _cmdLineProcessor.ProcessCommandAsync(commandLine);
 
                 if (commandLineProcessorResult.Success is false)
                 {
-                    Console.WriteLine($"Failed to service the command: {commandLine}");
-                    Console.WriteLine(commandLineProcessorResult.Message);
+                    Console.WriteLine($"Failed to execute given command  [{commandLine}]");
+                    Console.WriteLine($"Error message: {commandLineProcessorResult.Message}");
                 }
                 else
                 {
-                    Console.WriteLine($"Command: {commandLine} executed succesfully" + Environment.NewLine + Environment.NewLine);
-                    Console.WriteLine(commandLineProcessorResult.Message + Environment.NewLine + Environment.NewLine);
-
+                    Console.WriteLine($"Command: {commandLine} executed succesfully" + Environment.NewLine);
+                    Console.WriteLine("Command result: " + Environment.NewLine);
                     Console.WriteLine(commandLineProcessorResult.Result + Environment.NewLine);
                 }
 
@@ -50,7 +51,9 @@ internal class ConsoleAppInterface(CommandLineProcessor processor, DataContext d
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occured: {ex.Message}");
+                Console.WriteLine($"Unexpected error." + Environment.NewLine);
+                Console.WriteLine($"Application failed to service your command." + Environment.NewLine);
+                Console.WriteLine($"Error message: {Environment.NewLine + ex.Message}");
             }
         }
     }

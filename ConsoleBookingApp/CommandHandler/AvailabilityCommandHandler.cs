@@ -19,18 +19,9 @@ public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilit
 
             var outputBuilder = new StringBuilder();
             foreach (var roomAvailabitily in roomAvailabilities)
-                outputBuilder.AppendLine(roomAvailabitily.Day.ToString("yyyyMMdd") + " - " + roomAvailabitily.AvailabilityCount);
+                outputBuilder.AppendLine(roomAvailabitily.Day.ToString("yyyyMMdd") + " - " + roomAvailabitily.RoomAvailabilityCount);
 
             return new CommandHandlerResult { Success = true, ResultData = outputBuilder.ToString() };
-        }
-        catch (RoomAvailabilityServiceException ex)
-        {
-            return new CommandHandlerResult
-            {
-                Success = false,
-                Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
-                $"Error message: {ex.Message}"
-            };
         }
         catch (AvailabilityCommandHandlerParseException ex)
         {
@@ -43,10 +34,30 @@ public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilit
         }
         catch (AvailabilityCommandHandlerValidateException ex)
         {
-            return new CommandHandlerResult { 
-                Success = false, 
-                Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine + 
-                $"Error message: {ex.Message}" };
+            return new CommandHandlerResult
+            {
+                Success = false,
+                Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
+                $"Error message: {ex.Message}"
+            };
+        }
+        catch (RoomAvailabilityServiceException ex)
+        {
+            return new CommandHandlerResult
+            {
+                Success = false,
+                Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
+                $"Error message: {ex.Message}"
+            };
+        }
+        catch (Exception ex)
+        {
+            return new CommandHandlerResult
+            {
+                Success = false,
+                Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
+                            $"Error message: {ex.Message}"
+            };
         }
     }
 
@@ -72,11 +83,11 @@ public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilit
         {
             from = to = DateOnly.TryParseExact(date, "yyyyMMdd", out var dateOnly) ? dateOnly : throw new AvailabilityCommandHandlerParseException();
         }
-        if (date.Length == 17)
+        if (date.Length >= 17)
         {
-            var dateRange = date.Split('-');
+            var dateRange = date.Split('-').Select(x => x.Trim()).ToArray();
 
-            if (dateRange.Length != 2 || dateRange.Any(date => date.Length != 8))
+            if (dateRange.Count() != 2 || dateRange.Any(date => date.Length != 8))
                 throw new AvailabilityCommandHandlerParseException();
 
             from = DateOnly.TryParseExact(dateRange[0], "yyyyMMdd", out var dateOnlyFrom) ? dateOnlyFrom : throw new AvailabilityCommandHandlerParseException();

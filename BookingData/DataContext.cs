@@ -5,7 +5,8 @@ namespace BookingData;
 
 public class DataContext
 {
-    // when introduced JsonFileDataStorage List<> will be changed into generic repository - to handle save to underlying storage
+    // when JsonFileDataStorage will be added List<> will be changed into generic repository
+    // to handle save to underlying storage or save on the fly when entity added
     public List<Hotel> Hotels { get; private set; } = [];  
     public List<Booking> Bookings { get; private set; } = [];
 
@@ -19,8 +20,7 @@ public class DataContext
 
     public Task Initialization { get; private set; }
 
-    public async Task SaveAsync() 
-    // as we have kind of unit of work pattern here so common save method for consistency and future functionalities
+    public async Task SaveAsync() // unit of work pattern so common Save method for consistency and future functionalities
     {
         await Task.WhenAll(
             SaveHotelsToJsonAsync(),
@@ -44,9 +44,6 @@ public class DataContext
             Hotels = hotels;
             Bookings = bookings;
         }
-        
-        //throw new ArgumentException("One or more underlying datafiles are empty or corrupted.");  // maybe? the exception could be more descriptive then one from JsonSerializer
-        //var fs = File.OpenRead(_bookingRepositoryFilename);
     }
 
     private static JsonSerializerOptions JsonDataFileSerializerOptions()

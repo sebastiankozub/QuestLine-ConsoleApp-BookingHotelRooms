@@ -9,37 +9,87 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
 
     public async override Task<CommandHandlerResult> HandleAsync(string[] parameters)
     {
-        var parsedParameters = SearchCommandParse(parameters);
-        SearchCommandValidate(parsedParameters.hotelId, parsedParameters.availabitlityPeriod, parsedParameters.roomType);
-
         try
-        { 
+        {
+            var parsedParameters = SearchCommandParse(parameters);
+            SearchCommandValidate(parsedParameters.hotelId, parsedParameters.availabitlityPeriod, parsedParameters.roomType);
+
             var roomAvailabilities = await _roomAvailabilityService
-                .GetRoomAvailabilityByRoomType(parsedParameters.hotelId, parsedParameters.availabitlityPeriod, parsedParameters.roomType);
+                .GetRoomAvailabilityByRoomType(parsedParameters.hotelId, parsedParameters.availabitlityPeriod, parsedParameters.roomType, true);
 
             var outputBuilder = new StringBuilder();
-            foreach (var roomAvailabitily in roomAvailabilities)
+            var roomAvailabilitiesCount = roomAvailabilities.Count();
+            var emptyLineAdded = false;
+
+            for (int i = 0; i < roomAvailabilitiesCount;  )
             {
-                if (roomAvailabitily.AvailabilityCount > 0)
+                var roomAvailability = roomAvailabilities.ElementAt(i);
+
+                if (roomAvailability.RoomAvailabilityCount > 0)
                 {
-                    outputBuilder.Append(
-                    "(" + $"{roomAvailabitily.Day.ToString("yyyyMMdd")}" + "," + $"{roomAvailabitily.AvailabilityCount}" + "),");
+                    if (roomAvailability.SameCountPeriod == 1)
+                    {
+                        outputBuilder.AppendLine(
+                            "(" + $"{roomAvailability.Day:yyyyMMdd}" + ","
+                            + $"{roomAvailability.RoomAvailabilityCount}" + "),");
+                        i += 1;
+                    }
+                    else
+                    {
+                        outputBuilder.AppendLine(
+                            "(" + $"{roomAvailability.Day:yyyyMMdd} - {roomAvailability.Day.AddDays((int)roomAvailability.SameCountPeriod - 1):yyyyMMdd}"
+                            + "," + $"{roomAvailability.RoomAvailabilityCount}" + "),");
+                        i += (int)roomAvailability.SameCountPeriod;
+                    }
+                    emptyLineAdded = false;
                 }
-                else
-                {
-                    outputBuilder.AppendLine("");
+                else 
+                { 
+                    if (!emptyLineAdded) 
+                    { 
+                        outputBuilder.AppendLine("");
+                        emptyLineAdded = true; 
+                    }
+                    i += 1;
                 }
-            }               
+            }
 
             return new SearchCommandHandlerResult { Success = true, ResultData = outputBuilder.ToString() };
         }
-        catch(RoomAvailabilityServiceException ex)
+        catch (SearchCommandHandlerParseException ex)
         {
             return new CommandHandlerResult
             {
                 Success = false,
                 Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
                 $"Error message: {ex.Message}"
+            };
+        }
+        catch (SearchCommandHandlerValidateException ex)
+        {
+            return new CommandHandlerResult
+            {
+                Success = false,
+                Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
+                $"Error message: {ex.Message}"
+            };
+        }
+        catch (RoomAvailabilityServiceException ex)
+        {
+            return new CommandHandlerResult
+            {
+                Success = false,
+                Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
+                            $"Error message: {ex.Message}"
+            };
+        }
+        catch (Exception ex)
+        {
+            return new CommandHandlerResult
+            {
+                Success = false,
+                Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
+                            $"Error message: {ex.Message}"
             };
         }
     }
@@ -73,13 +123,16 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
 
         var days = parameters[1];
 
-        if (days.Length <= 0)        
+        if (string.IsNullOrEmpty(days))  
             throw new SearchCommandHandlerParseException();
  
-        if (days.Length >= 4)
+        if (days.Length >= 5)
             throw new SearchCommandHandlerParseException();
 
         var numberOfDaysAhead = int.TryParse(days, out var n) ? n : throw new SearchCommandHandlerParseException();
+
+        if (numberOfDaysAhead < 1)
+            throw new SearchCommandHandlerParseException("You cannot search for a room availability in the past. Use positive number to number of days ahead.");
 
         DateOnly from = GetTommorowUtcDateOnly();
         DateOnly to = from.AddDays(numberOfDaysAhead - 1);

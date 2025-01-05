@@ -68,7 +68,7 @@ public class CommandLineProcessor
             return new CommandLineProcessorResult
             {
                 Message = commandResult.Message,
-                Success = true,
+                Success = commandResult.Success,
                 Result = commandResult.ResultData,
                 PostProcess = null
             };

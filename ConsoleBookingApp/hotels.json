@@ -39,6 +39,10 @@
       {
         "roomType": "DBL",
         "roomId": "202"
+      },
+      {
+        "roomType": "DBL",
+        "roomId": "203"
       }
     ]
   }

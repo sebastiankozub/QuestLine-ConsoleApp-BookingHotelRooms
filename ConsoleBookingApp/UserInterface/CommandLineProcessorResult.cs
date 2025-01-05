@@ -40,7 +40,7 @@ public class HelpCommandLineProcessorResult : CommandLineProcessorResult   // TO
         _commandLineHandlers = commandLineHandler;
 
         Success = true;
-        Message = BuildHelpInfo(); //"Available commands: Help(), Exit(), Search(), Availability().";
+        Result = BuildHelpInfo();
         PostProcess = null;
     }
 
@@ -51,6 +51,9 @@ public class HelpCommandLineProcessorResult : CommandLineProcessorResult   // TO
 
         foreach (var handler in _commandLineHandlers)
             sb.AppendLine($"{handler.Value.DefaultCommandName}()");
+
+        sb.AppendLine("Help()");
+        sb.AppendLine("Exit()");
 
         return sb.ToString();
     }

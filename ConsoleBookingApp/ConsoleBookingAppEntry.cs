@@ -94,9 +94,9 @@ internal class ConsoleBookingAppEntry
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Fatal or non-servicable error during application run." + Environment.NewLine +   // TODO abstract from Console
-                              "Problem detail:" + Environment.NewLine + 
-                              $"{ex.Message}");
+            Console.WriteLine($"Application failed to service your command." + Environment.NewLine);
+            Console.WriteLine($"Error message: {Environment.NewLine + ex.Message}");
+            Console.WriteLine($"Application closing...");
         }
     }
 
