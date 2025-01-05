@@ -17,9 +17,11 @@ public class CommandLineParser : ICommandLineParser
 
         if (match.Success)
         {
-            string commandName = match.Groups[1].Value;
+            string commandName = match.Groups[1].Value.Trim();
+
             string parametersString = match.Groups[2].Value;
-            string[] parameters = parametersString.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            string[] parameters = parametersString.Split(',').Select(p => p.Trim()).ToArray();
+
             return (commandName, parameters);
         }
         else

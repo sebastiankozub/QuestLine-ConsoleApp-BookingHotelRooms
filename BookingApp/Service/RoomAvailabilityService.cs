@@ -115,7 +115,6 @@ public struct RoomAvaialabilityServiceResult(DateOnly day, uint sameCountPeriod,
     //public long RoomAvaialabilityUniqueCode = (new Random()).NextInt64();
 }
 
-
 //public class RoomAvaialabilityServiceResult : IEquatable<RoomAvaialabilityServiceResult>
 //{
 //    public DateOnly Day { get; set; }
