@@ -61,8 +61,8 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
             return new SearchCommandHandlerResult
             {
                 Success = false,
-                Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
-                $"Error message: {ex.Message}"
+                Message = $"Executing user command [{DefaultCommandName}] finieshed with error.",
+                ExceptionMessage = ex.Message
             };
         }
         catch (SearchCommandHandlerValidateException ex)
@@ -70,8 +70,8 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
             return new SearchCommandHandlerResult
             {
                 Success = false,
-                Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
-                $"Error message: {ex.Message}"
+                Message = $"Executing user command [{DefaultCommandName}] finieshed with error.",
+                ExceptionMessage = ex.Message
             };
         }
         catch (RoomAvailabilityServiceException ex)
@@ -79,8 +79,8 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
             return new SearchCommandHandlerResult
             {
                 Success = false,
-                Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
-                            $"Error message: {ex.Message}"
+                Message = $"Executing user command [{DefaultCommandName}] finieshed with error.",
+                ExceptionMessage = ex.Message
             };
         }
         catch (Exception ex)
@@ -88,8 +88,8 @@ public class SearchCommandHandler(IRoomAvailabilityService roomAvailabilityServi
             return new SearchCommandHandlerResult
             {
                 Success = false,
-                Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
-                            $"Error message: {ex.Message}"
+                Message = $"Executing user command [{DefaultCommandName}] finieshed with error.",
+                ExceptionMessage = ex.Message
             };
         }
     }

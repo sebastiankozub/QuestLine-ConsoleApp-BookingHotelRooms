@@ -28,8 +28,8 @@ public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilit
             return new AvailabilityCommandHandlerResult
             {
                 Success = false,
-                Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
-                $"Error message: {ex.Message}"
+                Message = $"Executing user command [{DefaultCommandName}] finieshed with error.",
+                ExceptionMessage = ex.Message
             };
         }
         catch (AvailabilityCommandHandlerValidateException ex)
@@ -37,8 +37,8 @@ public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilit
             return new AvailabilityCommandHandlerResult
             {
                 Success = false,
-                Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
-                $"Error message: {ex.Message}"
+                Message = $"Executing user command [{DefaultCommandName}] finieshed with error.",
+                ExceptionMessage = ex.Message
             };
         }
         catch (RoomAvailabilityServiceException ex)
@@ -46,8 +46,8 @@ public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilit
             return new AvailabilityCommandHandlerResult
             {
                 Success = false,
-                Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
-                $"Error message: {ex.Message}"
+                Message = $"Executing user command [{DefaultCommandName}] finieshed with error.",
+                ExceptionMessage = ex.Message
             };
         }
         catch (Exception ex)
@@ -55,8 +55,8 @@ public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilit
             return new AvailabilityCommandHandlerResult
             {
                 Success = false,
-                Message = $"Executing user command [{DefaultCommandName}] finieshed with error." + Environment.NewLine +
-                            $"Error message: {ex.Message}"
+                Message = $"Executing user command [{DefaultCommandName}] finieshed with error.",
+                ExceptionMessage = ex.Message
             };
         }
     }
@@ -96,7 +96,7 @@ public class AvailabilityCommandHandler(IRoomAvailabilityService roomAvailabilit
         else
             throw new AvailabilityCommandHandlerParseException();
 
-        if (from > to)        
+        if (from > to)
             (from, to) = (to, from);        
 
         return new(hotelId, (from, to), roomType);

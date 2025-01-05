@@ -24,22 +24,22 @@ There is room (or need) for more layers - for example:
 TODO MUST-TO:
 -------------
 
-0! Business logic in services & unit testing of the methods
+0! business logic in services and handlers - DONE
+0! unit testing of business logic
 
 1. CommandLineHandlers:
-- change to ICommandHandler - in this layer code cannot have anything common with comman line console
-- generic ones like: search, availability - collect into collection at the begining of the app
+- change to ICommandHandler - in this layer code cannot have anything common with command line console - DONE
+- generic ones like: search, availability - collect into collection at the begining of the app - REFACTOR different approach to di configuration
 - easier/cleaner code to maintain in few areas then
 - CommandLineHandlerData - inherited to create common base imput poco parameter for Handle(CommandLineHandlerData commandData) method
 
 2.CONFIG JSON
-- repair config json - use dictionary collection for command aliases
+- use dictionary collection for command aliases
 
-3. Command Aliases
+3. Command Aliases class
 - finish command alias mechanism - extracting to new class and unit testing
 
-4. make some classes cleaner & more compact - add unit testing
-
+4. Better Exception messages and servicing throwing - lot of repeating messages & code
 
 
 
