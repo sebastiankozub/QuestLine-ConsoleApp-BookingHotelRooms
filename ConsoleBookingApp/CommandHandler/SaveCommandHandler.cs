@@ -3,13 +3,13 @@ using BookingData;
 
 namespace ConsoleBookingApp.CommandHandler;
 
-public class SaveCommandHandler(IDataContext dataContext) : CommandHandler("Save")
+public class SaveCommandHandler(IDataContext dataContext) : OldCommandHandler("Save")
 {
     private readonly IDataContext _dataContext = dataContext;
 
-    public async override Task<ICommandHandlerResult> HandleAsync(string[] parameters)
+    public async override Task<IOldCommandHandlerResult> HandleAsync(string[] parameters)
     {
         await _dataContext.SaveAsync();
-        return await Task.FromResult(new CommandHandlerResult { Success = true, ResultData = "Saved" });
+        return await Task.FromResult(new OldCommandHandlerResult { Success = true, ResultData = "Saved" });
     }
 }

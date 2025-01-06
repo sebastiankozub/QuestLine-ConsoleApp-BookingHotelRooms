@@ -34,9 +34,9 @@ internal class NotResolvedCommandLineProcessorResult : CommandLineProcessorResul
 
 internal class HelpCommandLineProcessorResult : CommandLineProcessorResult   // TODO add aliases
 {
-    private readonly Dictionary<string, ICommandHandler> _commandLineHandlers;
+    private readonly Dictionary<string, IOldCommandHandler> _commandLineHandlers;
 
-    public HelpCommandLineProcessorResult(Dictionary<string, ICommandHandler> commandLineHandler)
+    public HelpCommandLineProcessorResult(Dictionary<string, IOldCommandHandler> commandLineHandler)
     {
         _commandLineHandlers = commandLineHandler;
 

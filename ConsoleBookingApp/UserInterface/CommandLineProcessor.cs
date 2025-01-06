@@ -7,7 +7,7 @@ namespace ConsoleBookingApp.UserInterface;
 internal class CommandLineProcessor
 {
     private readonly ICommandLineParser _parser;
-    private readonly Dictionary<string, ICommandHandler> _commandLineHandlers;
+    private readonly Dictionary<string, IOldCommandHandler> _commandLineHandlers;
 
     private readonly string _helpCommand;
     private readonly string _exitCommand;
@@ -16,7 +16,7 @@ internal class CommandLineProcessor
 
     private readonly Action<int>? _closeApplicationAction;
 
-    public CommandLineProcessor(ICommandLineParser parser, Dictionary<string, ICommandHandler> handlers,
+    public CommandLineProcessor(ICommandLineParser parser, Dictionary<string, IOldCommandHandler> handlers,
         IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions, Action<int>? closeApplicationAction)
     {
         _parser = parser;
@@ -73,7 +73,7 @@ internal class CommandLineProcessor
 
         //using (var scope = _serviceProvider.CreateScope())
         //{
-        //    var handlers = scope.ServiceProvider.GetServices<ICommandHandler>();
+        //    var handlers = scope.ServiceProvider.GetServices<IOldCommandHandler>();
         //    var handler = handlers.FirstOrDefault(h => input.StartsWith(h.CommandName));
 
         //    if (handler != null)

@@ -3,11 +3,11 @@ using System.Text;
 
 namespace ConsoleBookingApp.CommandHandler;
 
-public class SearchTestGenericCommandHandler(IRoomAvailabilityService roomAvailabilityService) : CommandHandler("NewSearch")
+public class SearchTestGenericCommandHandler(IRoomAvailabilityService roomAvailabilityService) : OldCommandHandler("NewSearch")
 {
     private readonly IRoomAvailabilityService _roomAvailabilityService = roomAvailabilityService;
 
-    public async override Task<ICommandHandlerResult> HandleAsync(string[] parameters)
+    public async override Task<IOldCommandHandlerResult> HandleAsync(string[] parameters)
     {
         try
         {

@@ -71,12 +71,12 @@ internal class ConsoleBookingAppEntry
 
             // CONSOLE COMMAND HANDLERS   // TODO - make real transient
             var commandLineHandlers = typeof(ConsoleBookingAppEntry).Assembly.GetTypes()
-                .Where(x => !x.IsAbstract && x.IsClass && x.GetInterface(nameof(ICommandHandler)) == typeof(ICommandHandler));
+                .Where(x => !x.IsAbstract && x.IsClass && x.GetInterface(nameof(IOldCommandHandler)) == typeof(IOldCommandHandler));
             foreach (var commandLineHandler in commandLineHandlers)
-                services.Add(new ServiceDescriptor(typeof(ICommandHandler), commandLineHandler, ServiceLifetime.Transient));
+                services.Add(new ServiceDescriptor(typeof(IOldCommandHandler), commandLineHandler, ServiceLifetime.Transient));
 
             services
-                .AddTransient(sp => sp.GetServices<ICommandHandler>().ToDictionary(h => h.DefaultCommandName))
+                .AddTransient(sp => sp.GetServices<IOldCommandHandler>().ToDictionary(h => h.DefaultCommandName))
                 .AddSingleton<ConsoleAppInterface>();
 
             // BOOKING APP DOMAIN
