@@ -1,4 +1,5 @@
 ﻿using ConsoleBookingApp;
+using ConsoleBookingApp.CommandHandler;
 
 namespace ConsoleBookingAppTest;
 
@@ -18,12 +19,12 @@ public class ConsoleBookingAppArgsParserTests
 
         var parser = new ConsoleBookingAppArgsParser(new ConsoleAppArgs { args = args });
 
-        var result = parser.Parse();
+        var (HotelsFilename, BookingsFilname) = parser.Parse();
 
         Assert.Multiple(() =>
         {
-            Assert.That(result.HotelsFilename, Is.EqualTo("hotels.txt"));
-            Assert.That(result.BookingsFilname, Is.EqualTo("bookings.txt"));
+            Assert.That(HotelsFilename, Is.EqualTo("hotels.txt"));
+            Assert.That(BookingsFilname, Is.EqualTo("bookings.txt"));
         });
     }
 
@@ -40,12 +41,12 @@ public class ConsoleBookingAppArgsParserTests
 
         var parser = new ConsoleBookingAppArgsParser(new ConsoleAppArgs { args = args });
 
-        var result = parser.Parse();
+        var (HotelsFilename, BookingsFilname) = parser.Parse();
 
         Assert.Multiple(() =>
         {
-            Assert.That(result.HotelsFilename, Is.EqualTo("hotels.txt"));
-            Assert.That(result.BookingsFilname, Is.EqualTo("bookings.txt"));
+            Assert.That(HotelsFilename, Is.EqualTo("hotels.txt"));
+            Assert.That(BookingsFilname, Is.EqualTo("bookings.txt"));
         });
     }
 
@@ -58,7 +59,7 @@ public class ConsoleBookingAppArgsParserTests
             "hotels.txt"
         };
 
-        Assert.Throws<ArgumentException>(() => new ConsoleBookingAppArgsParser(new ConsoleAppArgs { args = args }));
+        Assert.That(() => new ConsoleBookingAppArgsParser(new ConsoleAppArgs { args = args }), Throws.Exception.TypeOf<ArgumentException>());
     }
 
     [Test]
@@ -71,6 +72,21 @@ public class ConsoleBookingAppArgsParserTests
             "--bookings"
         };
 
-        Assert.Throws<ArgumentException>(() => new ConsoleBookingAppArgsParser(new ConsoleAppArgs { args = args }));
+        Assert.That(() => new ConsoleBookingAppArgsParser(new ConsoleAppArgs { args = args }), Throws.Exception.TypeOf<ArgumentException>());
+    }
+
+    [Test]
+    public void Parse_WithInvalidSwitchArg_ThrowsArgumentException()
+    {
+        var args = new string[]
+        {
+            "--hotel",   // should be --hotels
+            "hotels.txt",
+            "--bookings",
+            "bookings.txt"
+        };
+
+        Assert.That(() => { var parser = new ConsoleBookingAppArgsParser(new ConsoleAppArgs { args = args }); parser.Parse(); },
+            Throws.Exception.TypeOf<ArgumentException>());
     }
 }

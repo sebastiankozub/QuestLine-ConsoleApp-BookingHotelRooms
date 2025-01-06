@@ -14,7 +14,7 @@ public class CommandLineParserTests
 
     [TestCase("AddBooking(John Doe,2022-01-01)")]
     [TestCase("AddBooking(John Doe,)")]
-    [TestCase("AddBooking(   John Doe  ,    )")]        // command parser should not validate parameters values only parameters lenght
+    [TestCase("AddBooking(   John Doe  ,    )")]
     [TestCase("AddBooking(John Doe, 2022-   01-01)")] 
     [TestCase("AddBooking (John Doe,     2022-01-01)")]
     [TestCase("AddBooking ( John Doe   ,  2022-01-01     )")]
@@ -23,22 +23,28 @@ public class CommandLineParserTests
     [Parallelizable(ParallelScope.All)]
     public void Parse_ValidCommand_ReturnsCommandNameAndParameters(string command)
     { 
-        var result = _commandLineParser.Parse(command);
+        var (CommandName, Parameters) = _commandLineParser.Parse(command);
 
-        Assert.That(result.CommandName, Is.EqualTo("AddBooking"));
-        Assert.That(result.Parameters.Length, Is.EqualTo(2));
-        Assert.That(result.Parameters[0], Is.EqualTo("John Doe"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(CommandName, Is.EqualTo("AddBooking"));
+            Assert.That(Parameters.Length, Is.EqualTo(2));
+            Assert.That(Parameters[0], Is.EqualTo("John Doe"));
+        });
     }
 
     [TestCase("AddBooking(,)")]
     public void Parse_ValidCommandWithEmptyParams_ReturnsCommandNameAndParameters(string command)
     {
-        var result = _commandLineParser.Parse(command);
+        var (CommandName, Parameters) = _commandLineParser.Parse(command);
 
-        Assert.That(result.CommandName, Is.EqualTo("AddBooking"));
-        Assert.That(result.Parameters.Length, Is.EqualTo(2));
-        Assert.That(result.Parameters[0], Is.EqualTo(""));
-        Assert.That(result.Parameters[1], Is.EqualTo(""));
+        Assert.Multiple(() =>
+        {
+            Assert.That(CommandName, Is.EqualTo("AddBooking"));
+            Assert.That(Parameters.Length, Is.EqualTo(2));
+            Assert.That(Parameters[0], Is.EqualTo(""));
+            Assert.That(Parameters[1], Is.EqualTo(""));
+        });
     }
 
     [TestCase("AddBooking John Doe, 20220101)")]
@@ -50,9 +56,12 @@ public class CommandLineParserTests
     [Parallelizable(ParallelScope.All)]
     public void Parse_InvalidCommand_ReturnsEmptyCommandNameAndParameters(string command)
     {
-        var result = _commandLineParser.Parse(command);
+        var (CommandName, Parameters) = _commandLineParser.Parse(command);
 
-        Assert.That(result.CommandName, Is.EqualTo(""));
-        Assert.That(result.Parameters.Length, Is.EqualTo(0));
+        Assert.Multiple(() =>
+        {
+            Assert.That(CommandName, Is.EqualTo(""));
+            Assert.That(Parameters.Length, Is.EqualTo(0));
+        });
     }
 }

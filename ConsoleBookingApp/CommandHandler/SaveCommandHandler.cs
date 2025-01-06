@@ -3,7 +3,7 @@ using BookingData;
 
 namespace ConsoleBookingApp.CommandHandler;
 
-public class Save(IDataContext dataContext) : CommandHandler("Save")
+public class SaveCommandHandler(IDataContext dataContext) : CommandHandler("Save")
 {
     private readonly IDataContext _dataContext = dataContext;
 
