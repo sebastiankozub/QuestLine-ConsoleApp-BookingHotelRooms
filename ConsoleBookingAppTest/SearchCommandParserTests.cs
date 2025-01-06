@@ -29,7 +29,7 @@ public class SearchCommandParserTests
     //    new object[] { "AB", "p", "Standard" },
     //};
 
-    public static IEnumerable<TestCaseData> ParserTestPositiveCases()
+    private static IEnumerable<TestCaseData> ParserTestPositiveCases()
     {
         var tommorow = GetTommorowUtcDateOnly();
 
@@ -64,7 +64,7 @@ public class SearchCommandParserTests
             new TestCaseData(p5).SetName("SearchParser5").Returns(t5);
     }
 
-    public static IEnumerable<TestCaseData> ParserTestNegativeCases()
+    private static IEnumerable<TestCaseData> ParserTestNegativeCases()
     {
         var tommorow = GetTommorowUtcDateOnly();
 

@@ -56,7 +56,7 @@ public class SearchCommandValidatorTests
         yield return
             new TestCaseData("GH4I", (tommorow.AddDays(-1), tommorow.AddYears(3)), "Standard");      // from today
         yield return
-            new TestCaseData("C", (tommorow.AddDays(-1), tommorow.AddDays(-1)), "S");  // yesterday only
+            new TestCaseData("C", (tommorow.AddDays(-2), tommorow.AddDays(-2)), "Standard");  // yesterday only
         yield return
             new TestCaseData("111GHI", (tommorow.AddDays(-1), tommorow.AddDays(-1)), "Standard");   // today only
     }

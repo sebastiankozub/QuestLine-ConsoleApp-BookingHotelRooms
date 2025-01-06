@@ -6,7 +6,7 @@ namespace BookingUtils.FrameworkExtensions;
 
 public class DateOnlyJsonConverter : JsonConverter<DateOnly>
 {
-    private const string Format = "yyyyMMdd";
+    private const string Format = "yyyyMMdd";   // format tightly coupled to BookingApp data models
 
     public override DateOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
@@ -19,3 +19,4 @@ public class DateOnlyJsonConverter : JsonConverter<DateOnly>
         writer.WriteStringValue(value.ToString(Format, CultureInfo.InvariantCulture));
     }
 }
+

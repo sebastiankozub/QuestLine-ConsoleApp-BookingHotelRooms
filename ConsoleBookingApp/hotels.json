@@ -1,7 +1,7 @@
 [
   {
     "id": "H1",
-    "name": "Hotel California",
+    "name": "HotelCalifornia",
     "roomTypes": [
       {
         "code": "SGL",

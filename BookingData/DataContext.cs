@@ -1,5 +1,7 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 using BookingData.Model;
+using BookingUtils.FrameworkExtensions;
 
 namespace BookingData;
 
@@ -8,6 +10,7 @@ public interface IDataContext
     IList<Hotel> Hotels { get; }
     IList<Booking> Bookings { get; }
     Task Initialization { get; }
+    Task SaveAsync();
 }
 
 public class DataContext : IDataContext
@@ -55,22 +58,25 @@ public class DataContext : IDataContext
 
     private static JsonSerializerOptions JsonDataFileSerializerOptions()
     {
-        return new JsonSerializerOptions
+        var options =  new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = true
+            WriteIndented = true,            
         };
+
+        return options;
     }
+
 
     private async Task SaveHotelsToJsonAsync()  // looks like the methods  can be done as a generic methods
     {
-        using var hotelsWriter = new StreamWriter(_hotelRepositoryFilename);
+        using var hotelsWriter = new StreamWriter(_hotelRepositoryFilename + ".saved");
         await hotelsWriter.WriteAsync(JsonSerializer.Serialize(Hotels, JsonDataFileSerializerOptions()));
     }
 
     private async Task SaveBookingsToJsonAsync()
     {
-        using var bookingsWriter = new StreamWriter(_bookingRepositoryFilename);
+        using var bookingsWriter = new StreamWriter(_bookingRepositoryFilename + ".saved");
         await bookingsWriter.WriteAsync(JsonSerializer.Serialize(Bookings, JsonDataFileSerializerOptions()));
     }
 }

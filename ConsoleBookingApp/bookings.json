@@ -3,8 +3,8 @@
     "hotelId": "H1",
     "arrival": "20240901",
     "departure": "20240903",
-    "roomType": "DBL",
-    "roomRate": "Prepaid"
+    "roomRate": "Prepaid",
+    "roomType": "SGL"
   },
   {
     "hotelId": "H1",

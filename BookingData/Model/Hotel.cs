@@ -1,12 +1,13 @@
-﻿using System.Text.Json.Serialization;
+﻿using BookingUtils.FrameworkExtensions;
+using System.Text.Json.Serialization;
 
 namespace BookingData.Model;
 
 public class Room
 {
-    [JsonPropertyName("roomId")]
+
     public required string RoomId { get; set; }
-    [JsonPropertyName("roomType")]
+
     public required string RoomType { get; set; }
 }
 //        "roomType": "SGL",
@@ -29,11 +30,14 @@ public class RoomType
 
 public class Hotel
 {
+    [BookingAppIdentifierLenght(2, 10)]
     public required string Id { get; set; }
     public required string Name { get; set; }
     public required List<Room> Rooms { get; set; }
     public required List<RoomType> RoomTypes { get; set; }
 }
+
+
 //    "id": "H1",
 //    "name": "Hotel California",
 //    "roomTypes": [

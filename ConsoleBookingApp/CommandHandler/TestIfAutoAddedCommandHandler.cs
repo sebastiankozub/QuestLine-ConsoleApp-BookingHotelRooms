@@ -1,9 +1,4 @@
 ﻿using BookingApp.Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleBookingApp.CommandHandler;
 
@@ -13,6 +8,9 @@ public class TestIfAutoAddedCommandHandler(IRoomAvailabilityService roomAvailabi
 
     public async override Task<ICommandHandlerResult> HandleAsync(string[] parameters)
     {
+        if (_roomAvailabilityService is null)
+            throw new ArgumentNullException(nameof(_roomAvailabilityService));
+
         return await Task.FromResult(new CommandHandlerResult { Success = true, ResultData = "TestIfAutoAddedCommandHandlerResult" });
     }
 }

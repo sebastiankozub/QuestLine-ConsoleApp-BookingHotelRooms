@@ -1,6 +1,5 @@
 ﻿using BookingData;
 using System.Collections.ObjectModel;
-using System.Xml.Linq;
 
 namespace BookingApp.Service;
 
@@ -13,7 +12,6 @@ public class RoomAvailabilityService(IDataContext dataContext) : BookingAppServi
 
         try
         {
-
             return await Task<IEnumerable<RoomAvaialabilityServiceResult>>.Run(() =>
             {
                 var dates = ListOfDates(availabilityPerdiod.from, availabilityPerdiod.to);
