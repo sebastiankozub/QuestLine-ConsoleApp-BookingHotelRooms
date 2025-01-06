@@ -1,45 +1,53 @@
 ﻿Console application for booking a hotel room
 --------------------------------------------
 
-used to create and test nice & reusable console app framework library
-
+it was started as a simple console app to book a hotel room but...
+after a day of coding...
+I started creating reusable console app framework library
+so the project is a booking app only to test
+a road to have nice framework for console apps in progress :) 
 
 Architecture
 ------------
 
 Layered Architecture:
-1. Data - should be splitted and data persistance logic extracted to IDataStorage interface and JsonFileDataStorage class
-2. Business Logic - use data layer to fulfill business needs
-3. Command Handler - connecting ui with business logic - eg. chaging data format between ui and core logic - at some point splited into command & query cqrs for cleaner code of data transformation
+1. DataContext - should be splitted and data persistance logic extracted to IDataStorage interface and JsonFileDataStorage class
+2. BookingApp - Business Logic - use data layer to fulfill business needs
+3. Command Handler - connecting text ui with business logic - eg. changing data format between ui and core logic - at some point splited into command & query cqrs for cleaner code of data transformation
 4. Command Line Processor - parsing command line input and triggering command handler or returning to User Interface
-5. User Interface - at the moment to strongly mixed views geneartion with ui logic and and app entry point logic - to refactoring
+5. User Interface  - at the moment too strongly coupled views geneartion with ui logic and app entry point logic
 
 There is room (or need) for more layers - for example:
 1. JsonFileDataStorage - implementuing abstraction above data storage IDataStorage to be used by DataContext: Save() and Inititialize()
-2. CommandLineReader put between BookingAppConsoleInterface and CommandLineProcessor - resolve mix in User Interface layer -> spliting ui views geneartion and app logic
+2. UserInterace - put something BookingAppConsoleInterface and CommandLineProcessor - resolve mix in User Interface layer -> spliting ui views geneartion and app logic
 3. EntryPoint, Configuration, DI - split the responsibilities more & move some to class library projects to avoid dependencies eg. registering extension method AddDataContext()
+4. View gereation engine
 
 
-TODO MUST-TO:
--------------
+TODO
+----
 
-0! business logic in services and handlers - DONE
+0. business logic in services and handlers - DONE
 
-0! unit testing of business logic
+1. unit testing of business logic - DONE
 
-1. ILogger
+2. parsing and validation - DONE  (improve to return Validation/ParsingResult)
 
-2. CommandLineHandlers:
+3. add ILogger
+
+4. CommandLineHandlers:
+- auto registration when new class added to namespace - DONE
 - change to ICommandHandler - in this layer code cannot have anything common with command line console - DONE
 - generic ones like: search, availability - collect into collection at the begining of the app - REFACTOR different approach to di configuration
 - easier/cleaner code to maintain in few areas then
 - CommandLineHandlerData - inherited to create common base imput poco parameter for Handle(CommandLineHandlerData commandData) method
 
-3. CONFIG JSON + Command Aliases class
-- use dictionary collection for command aliases
+5. CONFIG JSON + Command Aliases class - atm one method and some magic stringd hardcoding
+- use dictionary collection in json config for command aliases
 - finish command alias mechanism - extracting to new class and unit testing
 
-4. Better Exception messages and servicing throwing - lot of repeating messages & code
+6. Better Exception messages and servicing exc throwing 
+- lot of repeating or messy messages - create mechanism to service that giving doors to multi language
 
 
 
@@ -50,7 +58,25 @@ TODO MUST-TO:
 
 
 
-REVIEWER INFO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Code Quality & Design: we value readable and simply designed code. We hate over-engineering and enterprise-style code. Some areas to research:
 

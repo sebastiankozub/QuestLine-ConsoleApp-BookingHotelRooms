@@ -151,9 +151,5 @@ public class RoomAvailabilityServiceTests
         //CollectionAssert.AreEquivalent(expectedAvailability, result.ToList()); 
         CollectionAssert.AreEqual(expectedAvailability, result.ToList());
     }
-
-
-
-
 }
 

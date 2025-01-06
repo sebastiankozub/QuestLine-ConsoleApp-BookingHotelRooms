@@ -7,7 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleBookingApp", "Consol
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2573608C-770C-4DEF-B807-F09840F535E2}"
 	ProjectSection(SolutionItems) = preProject
-		LICENSE.txt = LICENSE.txt
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -19,7 +18,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookingUtils", "BookingUtil
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookingAppTest", "BookingAppTest\BookingAppTest.csproj", "{B255AC9A-C613-4B69-9FCE-F1EBA1608280}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserInterfaceTest", "UserInterfaceTest\UserInterfaceTest.csproj", "{64EADEFC-6B09-4550-91D4-3F720D0D166D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserInterfaceTest", "UserInterfaceTest\UserInterfaceTest.csproj", "{64EADEFC-6B09-4550-91D4-3F720D0D166D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleBookingAppTest", "ConsoleBookingAppTest\ConsoleBookingAppTest.csproj", "{154CDE36-F745-4A0F-A96B-D51F7BFFE268}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{097F3CE7-2785-45E8-8284-931C8F81CD0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,9 +54,18 @@ Global
 		{64EADEFC-6B09-4550-91D4-3F720D0D166D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64EADEFC-6B09-4550-91D4-3F720D0D166D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64EADEFC-6B09-4550-91D4-3F720D0D166D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{154CDE36-F745-4A0F-A96B-D51F7BFFE268}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{154CDE36-F745-4A0F-A96B-D51F7BFFE268}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{154CDE36-F745-4A0F-A96B-D51F7BFFE268}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{154CDE36-F745-4A0F-A96B-D51F7BFFE268}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B255AC9A-C613-4B69-9FCE-F1EBA1608280} = {097F3CE7-2785-45E8-8284-931C8F81CD0A}
+		{64EADEFC-6B09-4550-91D4-3F720D0D166D} = {097F3CE7-2785-45E8-8284-931C8F81CD0A}
+		{154CDE36-F745-4A0F-A96B-D51F7BFFE268} = {097F3CE7-2785-45E8-8284-931C8F81CD0A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A3524F82-C41E-4459-B358-73DB707CC913}

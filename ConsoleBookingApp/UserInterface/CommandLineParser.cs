@@ -12,7 +12,8 @@ public class CommandLineParser : ICommandLineParser
 {
     public (string CommandName, string[] Parameters) Parse(string command)
     {
-        string pattern = @"^(\w+)\s*\(([^)]*)\)$";
+        //@"^(\w+)\s*\(([^)]*)\)$";
+        var pattern = @"^(\w+)\s*\(([^)]*)?\)$";
         Match match = Regex.Match(command.Trim(), pattern);
 
         if (match.Success)
