@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace ConsoleBookingApp.UserInterface;
 
-public class CommandLineProcessor
+internal class CommandLineProcessor
 {
     private readonly ICommandLineParser _parser;
     private readonly Dictionary<string, ICommandHandler> _commandLineHandlers;

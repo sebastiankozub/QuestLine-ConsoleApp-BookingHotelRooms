@@ -3,12 +3,12 @@ using System.Text.RegularExpressions;
 
 namespace ConsoleBookingApp.UserInterface;
 
-public interface ICommandLineParser
+internal interface ICommandLineParser
 {
     (string CommandName, string[] Parameters) Parse(string command);
 }
 
-public class CommandLineParser : ICommandLineParser
+internal class CommandLineParser : ICommandLineParser
 {
     public (string CommandName, string[] Parameters) Parse(string command)
     {

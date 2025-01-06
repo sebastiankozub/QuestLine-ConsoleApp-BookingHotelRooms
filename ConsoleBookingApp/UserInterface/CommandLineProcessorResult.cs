@@ -3,7 +3,7 @@ using System.Text;
 
 namespace ConsoleBookingApp.UserInterface;
 
-public class CommandLineProcessorResult
+internal class CommandLineProcessorResult
 {
     public bool Success { get; set; }
     public string? Message { get; set; }
@@ -12,7 +12,7 @@ public class CommandLineProcessorResult
     public string? ExceptionMessage { get; set; }
 }
 
-public class EmptyCommandLineProcessorResult : CommandLineProcessorResult
+internal class EmptyCommandLineProcessorResult : CommandLineProcessorResult
 {
     public EmptyCommandLineProcessorResult(string helpCommand)
     {
@@ -22,7 +22,7 @@ public class EmptyCommandLineProcessorResult : CommandLineProcessorResult
     }
 }
 
-public class NotResolvedCommandLineProcessorResult : CommandLineProcessorResult
+internal class NotResolvedCommandLineProcessorResult : CommandLineProcessorResult
 {
     public NotResolvedCommandLineProcessorResult(string fullCommand)
     {
@@ -32,7 +32,7 @@ public class NotResolvedCommandLineProcessorResult : CommandLineProcessorResult
     }
 }
 
-public class HelpCommandLineProcessorResult : CommandLineProcessorResult   // TODO add aliases
+internal class HelpCommandLineProcessorResult : CommandLineProcessorResult   // TODO add aliases
 {
     private readonly Dictionary<string, ICommandHandler> _commandLineHandlers;
 
@@ -60,7 +60,7 @@ public class HelpCommandLineProcessorResult : CommandLineProcessorResult   // TO
     }
 }
 
-public class ExitCommandLineProcessorResult : CommandLineProcessorResult
+internal class ExitCommandLineProcessorResult : CommandLineProcessorResult
 {
     public ExitCommandLineProcessorResult(string command, Action<int>? closeAppDelegate)
     {
@@ -70,7 +70,7 @@ public class ExitCommandLineProcessorResult : CommandLineProcessorResult
     }
 }
 
-public class InvalidFormatCommandLineProcessorResult : CommandLineProcessorResult
+internal class InvalidFormatCommandLineProcessorResult : CommandLineProcessorResult
 {
     public InvalidFormatCommandLineProcessorResult(string helpCommand)
     {

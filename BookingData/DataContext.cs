@@ -1,7 +1,5 @@
-﻿using System;
-using System.Text.Json;
+﻿using System.Text.Json;
 using BookingData.Model;
-using BookingUtils.FrameworkExtensions;
 
 namespace BookingData;
 

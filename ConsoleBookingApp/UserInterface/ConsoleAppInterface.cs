@@ -59,7 +59,6 @@ internal class ConsoleAppInterface(CommandLineProcessor processor, IOptions<User
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Unexpected error." + Environment.NewLine);
                 Console.WriteLine($"Application failed to service your command." + Environment.NewLine);
                 Console.WriteLine($"Error message: {Environment.NewLine + ex.Message}");
             }

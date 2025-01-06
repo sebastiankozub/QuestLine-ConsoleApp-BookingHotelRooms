@@ -60,6 +60,7 @@ internal class ConsoleBookingAppEntry
                     return options;
                 });
 
+            // DATALAYER
             services
                 .AddSingleton<IDataContext>(sp => {
                     var consoleArgsParser = sp.GetRequiredService<ConsoleBookingAppArgsParser>();
@@ -94,7 +95,7 @@ internal class ConsoleBookingAppEntry
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Application failed to service your command." + Environment.NewLine);
+            Console.WriteLine($"Application failed to start." + Environment.NewLine);
             Console.WriteLine($"Error message: {Environment.NewLine + ex.Message}");
             Console.WriteLine($"Application closing...");
         }

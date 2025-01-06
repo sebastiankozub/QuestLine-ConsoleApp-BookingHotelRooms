@@ -7,6 +7,25 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>ConsoleBookingAppTest</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>UserInterfaceTest</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <!--AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">-->
+
   <ItemGroup>
     <Compile Remove="Data\**" />
     <Compile Remove="oldies\**" />

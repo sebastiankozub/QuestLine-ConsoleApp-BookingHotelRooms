@@ -13,7 +13,6 @@ public class SearchCommandHandlerData : CommandHandlerData
 }
 
 public class AvailabilityCommandHandlerData : CommandHandlerData
-
 {
     public required string? HotelId { get; set; } = null;
 }
