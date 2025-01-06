@@ -5,14 +5,16 @@ it was started as a simple console app to book a hotel room but...
 after a day of coding...
 I started creating reusable console app framework library
 so the project is a booking app only to test
-a road to have nice framework for console apps in progress :) 
+a road to have nice framework for console apps - atm in progress and lot of ideas to fullfil :) 
 
 Architecture
 ------------
 
 Layered Architecture:
-1. DataContext - should be splitted and data persistance logic extracted to IDataStorage interface and JsonFileDataStorage class
-2. BookingApp - Business Logic - use data layer to fulfill business needs
+    
+1. DataContext - works nice but should be splitted and data persistance logic extracted to IDataStorage interface and JsonFileDataStorage class
+                 should be injected only to IBookingAppService but intermediate state force me to inject it also into SaveCommandHandler
+2. BookingApp - Business Logic - core logic that uses data layer to fulfill business needs 
 3. Command Handler - connecting text ui with business logic - eg. changing data format between ui and core logic - at some point splited into command & query cqrs for cleaner code of data transformation
 4. Command Line Processor - parsing command line input and triggering command handler or returning to User Interface
 5. User Interface  - at the moment too strongly coupled views geneartion with ui logic and app entry point logic
@@ -29,29 +31,31 @@ TODO
 
 0. business logic in services and handlers - DONE
 
-1. unit testing of business logic - DONE
-
-2. parsing and validation - DONE  (improve to return Validation/ParsingResult)
+1. unit testing of business logic - DONE  
+2. handler parsing and validation - DONE  
+   improve to return Validation/ParsingResult or by abstract method and get rid quickly implemented static method approach)
 
 3. add ILogger
+
+4!. Generic CommandHandler\<T\> abstract class typed by collection returned from service - much cleaner output formating by FormatOutput<T>() abstract method
 
 4. CommandLineHandlers:
 - auto registration when new class added to namespace - DONE
 - change to ICommandHandler - in this layer code cannot have anything common with command line console - DONE
 - generic ones like: search, availability - collect into collection at the begining of the app - REFACTOR different approach to di configuration
 - easier/cleaner code to maintain in few areas then
-- CommandLineHandlerData - inherited to create common base imput poco parameter for Handle(CommandLineHandlerData commandData) method
+
+Needed?
+- CommandHandlerData - inherited to create common base imput poco parameter for Handle(CommandLineHandlerData commandData) method
 
 5. CONFIG JSON + Command Aliases class - atm one method and some magic stringd hardcoding
 - use dictionary collection in json config for command aliases
 - finish command alias mechanism - extracting to new class and unit testing
 
+5.1. Better Help() - list aslo aliases and command description
+
 6. Better Exception messages and servicing exc throwing 
 - lot of repeating or messy messages - create mechanism to service that giving doors to multi language
-
-
-
-
 
 
 
