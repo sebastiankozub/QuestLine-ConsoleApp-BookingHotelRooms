@@ -1,20 +1,12 @@
 ﻿namespace QuickConsole;
 
 
-public class QuickConsoleRunArgsManager                                    
+public class QuickConsoleRunArgsManager(QuickConsoleRunArgs runCommandArgs)
 {
-    private readonly string[] _args;
+    private readonly string[] _args = runCommandArgs.args;
 
-    private readonly string _hotelsArgsSwitch;
-    private readonly string _bookingsArgsSwitch;
-
-    public QuickConsoleRunArgsManager(QuickConsoleRunArgs runCommandArgs)
-    {
-        _args = runCommandArgs.args;
-
-        _hotelsArgsSwitch = "hotels";
-        _bookingsArgsSwitch = "bookings";
-    }
+    private readonly string _hotelsArgsSwitch = "hotels";
+    private readonly string _bookingsArgsSwitch = "bookings";
 
     public (string HotelsFilename, string BookingsFilname) Parse()
     {

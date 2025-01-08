@@ -37,7 +37,7 @@ public abstract class OldCommandHandler(string defaultCommandName) : IOldCommand
 
 // new approach  
 // servicing Command and Query 
-public interface IHandler<IHandlerResult>
+public interface IHandler
 {
     string DefaultHandlerName { get; }
     Task<IHandlerResult> HandleAsync(string[] parameters);
@@ -48,63 +48,44 @@ public interface IHandler<IHandlerResult>
 /// </summary>
 /// <typeparam name="T">Type parameters is model returned by HandleInternalAsync</typeparam>
 /// <param name="defaultHandlerName"></param>
-public abstract class CommandHandler<T>(string defaultHandlerName) : IHandler<CommandHandlerResult> where T : class?
+public abstract class CommandHandler<T>(string defaultHandlerName) : IHandler //where T : struct
 {
     public string DefaultHandlerName { get { return _defaultHandlerName; } }
 
     protected readonly string _defaultHandlerName = defaultHandlerName;
 
-    public async virtual Task<CommandHandlerResult> ResolveCommandHandlerInternalResult(CommandHandlerInternalResult<T> internalHandlerResult)
-    {
-        var result = new CommandHandlerResult()
-        {
-            ExceptionType = internalHandlerResult.Exception?.GetType(), 
-            ExceptionMessage = internalHandlerResult.Exception?.Message,
-            ResultData = internalHandlerResult.Result?.ToString(),    // override ToString? for the type
-            Success = internalHandlerResult.Success,
-            Message = "Additional info",
-            PostResultAction = null
-        };
-        return await Task.FromResult<CommandHandlerResult>(result);
-    }
+    public abstract Task<CommandHandlerResult> ResolveCommandHandlerInternalResult(object internalHandlerResult, Exception? internalHandlerException = null);
 
     protected abstract Task<Dictionary<string, IEnumerable<object>>> BuildParametersForHandleInternalAsync(string[] parameters);
 
-    protected abstract Task<CommandHandlerInternalResult<T>> HandleInternalAsync(Dictionary<string, IEnumerable<object>> parametersDictionary);
+    protected abstract Task<T> HandleInternalAsync(Dictionary<string, IEnumerable<object>> parametersDictionary);
 
     private async Task<CommandHandlerResult> CatchHandleInternalAsync(string[] parameters)
     {
-        Exception? exc = null;
-        CommandHandlerInternalResult<T>? internalHandlerResult = null;
+        Exception? internalHandlerException;
+        T internalHandlerResult;
 
         try
         {
             var parametersDictionary = await BuildParametersForHandleInternalAsync(parameters);
-            internalHandlerResult = await HandleInternalAsync(parametersDictionary);            
+            internalHandlerResult = await HandleInternalAsync(parametersDictionary);
+            return await ResolveCommandHandlerInternalResult(internalHandlerResult);
         }
         catch (Exception exception)
         {
-            exc = exception;
+            internalHandlerException = exception;
+            return await ResolveCommandHandlerInternalResult(new object(), internalHandlerException);  // separate method returning CommandHandlerErrorResult
         }
-
-        if (internalHandlerResult is null)
-            return new CommandHandlerResult
-            {
-                Success = false,
-                ExceptionMessage = exc?.Message
-            };
-        else
-            return await ResolveCommandHandlerInternalResult(internalHandlerResult);
     }
-    
-    public async Task<CommandHandlerResult> HandleAsync(string[] parameters)
+
+    public async Task<IHandlerResult> HandleAsync(string[] parameters)
     {
         return await CatchHandleInternalAsync(parameters);
     }
 }
 
 
-public abstract class QueryHandler<T>(string defaultHandlerName) : IHandler<QueryHandlerResult> where T : class?
+public abstract class QueryHandler<T>(string defaultHandlerName) : IHandler
 {
     public string DefaultHandlerName { get { return _defaultHandlerName; } }
 
@@ -153,12 +134,13 @@ public abstract class QueryHandler<T>(string defaultHandlerName) : IHandler<Quer
             return await ResolveCommandHandlerInternalResult(internalHandlerResult);
     }
 
-    public async Task<QueryHandlerResult> HandleAsync(string[] parameters)
+    public async Task<IHandlerResult> HandleAsync(string[] parameters)
     {
         return await CatchHandleInternalAsync(parameters);
     }
 
     public abstract Task<T> HandleInternalAsync(string[] parameters);
+
 }
 
 

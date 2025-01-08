@@ -34,6 +34,7 @@ public interface IHandlerInternalResult
 // Command Internal
 public interface ICommandHandlerInternalResult : IHandlerInternalResult
 {
+
 }
 
 public class CommandHandlerInternalResult<T> : ICommandHandlerInternalResult 
@@ -51,7 +52,6 @@ public class CommandHandlerInternalResult<T> : ICommandHandlerInternalResult
 }
 
 // Query Internal
-
 public interface IQueryHandlerInternalResult : IHandlerInternalResult
 {
 }
