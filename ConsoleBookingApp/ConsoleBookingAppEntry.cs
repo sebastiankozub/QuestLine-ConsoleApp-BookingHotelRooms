@@ -73,6 +73,7 @@ internal class ConsoleBookingAppEntry
             // CONSOLE COMMAND HANDLERS  // Substituting with new command handlers
             var commandLineHandlers = typeof(ConsoleBookingAppEntry).Assembly.GetTypes()
                 .Where(x => !x.IsAbstract && x.IsClass && x.GetInterface(nameof(IOldCommandHandler)) == typeof(IOldCommandHandler));
+
             foreach (var commandLineHandler in commandLineHandlers)
             {
                 services.Add(new ServiceDescriptor(typeof(IOldCommandHandler), commandLineHandler, ServiceLifetime.Transient));
@@ -81,38 +82,11 @@ internal class ConsoleBookingAppEntry
                 .AddTransient(sp => sp.GetServices<IOldCommandHandler>().ToDictionary(h => h.DefaultCommandName))
                 .AddSingleton<ConsoleAppInterface>();
 
-            // NEW COMMAND HANDLERS 
-            var handlers = typeof(ConsoleBookingAppEntry).Assembly.GetTypes()
-                .Where(x => !x.IsAbstract && x.IsClass && x.GetInterface(nameof(IHandler)) == typeof(IHandler));
-
-            foreach (var handler in handlers)
-            {
-                services.Add(new ServiceDescriptor(typeof(IHandler), handler.Name, handler, ServiceLifetime.Transient));
-                //object handlerInstance = Activator.CreateInstance(handler);
-                //if (handlerInstance is not null)
-                //    services.AddKeyedTransient<IHandler>(handler.Name, delegate { return (IHandler)handlerInstance; });                
-            }
 
             services
-                .AddTransient<Dictionary<string, string>>(sp => {
-                    var defautCommandNames = new Dictionary<string, string>();
-                    foreach (var handler in handlers)
-                    {
-                        var h = sp.GetKeyedService<IHandler>(handler.Name);
-                        var defautCommandName = h?.DefaultHandlerName;
-
-                        if (defautCommandName is not null && h is not null)
-                        {
-                            var typeName = h.GetType().Name;
-                            defautCommandNames.Add(defautCommandName, typeName);
-                        }
-                    }
-                    return defautCommandNames;
-                });
-
-
-
-            services.AddQuickConsole();//.AddQuickCommandLineArguments(args);
+                .AddQuickConsole()
+                .AddQuickHandlers();
+                //.AddQuickCommandLineArguments(args);
 
 
             // BOOKING APP DOMAIN
@@ -121,14 +95,9 @@ internal class ConsoleBookingAppEntry
             // BUILD & RUN
             var serviceProvider = services.BuildServiceProvider();
 
-
-
             // DATA LAYER INITIALIZATION                     
             var dataContext = serviceProvider.GetRequiredService<IDataContext>();  // TODO check NuGet/HostInitActions for asyncronous initialization
             await dataContext.Initialization;
-
-
-
 
             // RUN
             var consoleAppInterface = serviceProvider.GetRequiredService<ConsoleAppInterface>();

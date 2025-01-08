@@ -3,6 +3,8 @@ using ConsoleBookingApp.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Text;
+using QuickConsole.Handler;
+using QuickConsole; 
 
 namespace ConsoleBookingApp.UserInterface;
 
@@ -58,7 +60,6 @@ internal class CommandLineProcessor
             return new ExitCommandLineProcessorResult(givenCommand, _closeApplicationAction);
 
         //old handlers
-
         if ((IsAlias(givenCommand, out var commandFromAlias) 
             && _oldCommandLineHandlers.TryGetValue(commandFromAlias, out var commandHandler))  // not possible to null reference exception
             || _oldCommandLineHandlers.TryGetValue(givenCommand, out commandHandler))  
@@ -76,7 +77,6 @@ internal class CommandLineProcessor
         }
 
         // SERVICE NEW HANDLER
-
         var defaultHandlerName = _newHandlerDefaultNames[givenCommand];   // can throw exception when key found - will change into alias resolver
 
         using var scope = _serviceProvider.CreateScope();

@@ -1,4 +1,5 @@
 ﻿using BookingApp.Service;
+using QuickConsole.Handler;
 
 namespace ConsoleBookingApp.CommandHandler;
 
@@ -6,13 +7,13 @@ public class TestCommandHandler(IRoomAvailabilityService roomAvailabilityService
 {
     private readonly IRoomAvailabilityService _roomAvailabilityService = roomAvailabilityService;
 
-    public async override Task<CommandHandlerResult> BuildResultFrom(bool internalHandlerResult)
+    public override CommandHandlerResult BuildResultFrom(bool internalHandlerResult)
     {
-        return await Task.FromResult(new CommandHandlerResult()
+        return new CommandHandlerResult()
         {
             Success = true,
             ResultData = (internalHandlerResult).ToString()
-        });
+        };
     }
 
     protected async override Task<Dictionary<string, IEnumerable<object>>> BuildParametersForHandleInternal(string[] parameters)
