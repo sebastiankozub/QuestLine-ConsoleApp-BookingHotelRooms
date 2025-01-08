@@ -6,19 +6,16 @@ public class TestCommandHandler(IRoomAvailabilityService roomAvailabilityService
 {
     private readonly IRoomAvailabilityService _roomAvailabilityService = roomAvailabilityService;
 
-    public async override Task<CommandHandlerResult> ResolveCommandHandlerInternalResult(object internalHandlerResult, Exception? internalHandlerException = null)
+    public async override Task<CommandHandlerResult> BuildResultFrom(bool internalHandlerResult)
     {
-        if (internalHandlerResult is not null && internalHandlerException is null)
+        return await Task.FromResult(new CommandHandlerResult()
         {
-            return await Task.FromResult(new CommandHandlerResult { Success = (bool)internalHandlerResult, ResultData = "1" });
-        }
-        else
-        {
-            return await Task.FromResult(new CommandHandlerResult { Success = false, ExceptionType = internalHandlerException?.GetType(), ExceptionMessage = internalHandlerException?.Message  });
-        }
+            Success = true,
+            ResultData = (internalHandlerResult).ToString()
+        });
     }
 
-    protected async override Task<Dictionary<string, IEnumerable<object>>> BuildParametersForHandleInternalAsync(string[] parameters)
+    protected async override Task<Dictionary<string, IEnumerable<object>>> BuildParametersForHandleInternal(string[] parameters)
     {
         var parametersDictionary = new Dictionary<string, IEnumerable<object>>();
         return await Task.FromResult(parametersDictionary);

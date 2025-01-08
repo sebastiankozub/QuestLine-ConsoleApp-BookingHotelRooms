@@ -10,7 +10,7 @@ public class OldCommandHandlerResult : IOldCommandHandlerResult
 }
 
 public class AvailabilityCommandHandlerResult : OldCommandHandlerResult
-{ }
+{}
 
 public class SearchCommandHandlerResult : OldCommandHandlerResult
 {}
@@ -26,87 +26,46 @@ public interface IOldCommandHandlerResult
 
 
 
-// NEW APPROACH 
-public interface IHandlerInternalResult
-{
-}
-
-// Command Internal
-public interface ICommandHandlerInternalResult : IHandlerInternalResult
-{
-
-}
-
-public class CommandHandlerInternalResult<T> : ICommandHandlerInternalResult 
-{
-    public T? Result { get; set; } = default(T); 
-
-    public Type GetResultType()
-    {
-        return typeof(T);
-    }
-
-    public bool Success { get; set; }
-
-    public Exception? Exception { get; set; }
-}
-
-// Query Internal
-public interface IQueryHandlerInternalResult : IHandlerInternalResult
-{
-}
-
-public class QueryHandlerInternalResult<T> : IQueryHandlerInternalResult
-{
-    public T? Result { get; set; } = default(T);
-
-    public Type GetResultType()
-    {
-        return typeof(T);
-    }
-
-    public bool Success { get; set; }
-
-    public Exception? Exception { get; set; }
-}
-
-
-// HandleAsync results 
-
-public interface IHandlerResult    
+// NEW HANDLERS APPROACH 
+public interface IHandlerResult
 {
     bool Success { get; set; }
     string? Message { get; set; }
-    string? ExceptionMessage { get; set; }
     Action? PostResultAction { get; set; }
 }
 
-public interface IQueryHandlerResult  : IHandlerResult 
+public interface IQueryHandlerResult  : IHandlerResult
 {
-    string[]? ResultData { get; set; }
+    string[] ResultData { get; set; }
 }
 
 public interface ICommandHandlerResult : IHandlerResult
 {
-    string? ResultData { get; set; }
+    string ResultData { get; set; }
 }
 
 public class CommandHandlerResult : ICommandHandlerResult
 {
-    public bool Success { get; set; }
+    public bool Success { get; set; } = true;
     public string? Message { get; set; }
-    public string? ExceptionMessage { get; set; }
-    public Type? ExceptionType { get; set; }
-    public string? ResultData { get; set; } 
+    public required string ResultData { get; set; }
     public Action? PostResultAction { get; set; }
 }
 
 public class QueryHandlerResult : IQueryHandlerResult
 {
-    public bool Success { get; set; }
+    public bool Success { get; set; } = true;
     public string? Message { get; set; }
-    public string? ExceptionMessage { get; set; }
-    public Type? ExceptionType { get; set; }
-    public string[]? ResultData { get; set; }   // many rows of items or one row entity
+    public required string[] ResultData { get; set; }
     public Action? PostResultAction { get; set; }
 }
+
+public class ExceptionHandlerResult : IHandlerResult
+{
+    public bool Success { get; set; } = false;
+    public string? Message { get; set; }
+    public Action? PostResultAction { get; set; }
+    public required string ExceptionMessage { get; set; }
+    public required Type ExceptionType { get; set; }
+}
+

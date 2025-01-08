@@ -2,6 +2,7 @@
 using ConsoleBookingApp.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using System.Text;
 
 namespace ConsoleBookingApp.UserInterface;
 
@@ -14,7 +15,6 @@ internal class CommandLineProcessor
 
     private readonly string _helpCommand;
     private readonly string _exitCommand;
-
 
     private readonly UserInterfaceCommandsOptions _uiCommandsOptions;
 
@@ -58,6 +58,7 @@ internal class CommandLineProcessor
             return new ExitCommandLineProcessorResult(givenCommand, _closeApplicationAction);
 
         //old handlers
+
         if ((IsAlias(givenCommand, out var commandFromAlias) 
             && _oldCommandLineHandlers.TryGetValue(commandFromAlias, out var commandHandler))  // not possible to null reference exception
             || _oldCommandLineHandlers.TryGetValue(givenCommand, out commandHandler))  
@@ -74,29 +75,49 @@ internal class CommandLineProcessor
             };
         }
 
-        // new handlers
-        //if (IsAlias(givenCommand, out commandFromAlias))
-        //{
-            var defaultHandlerName = _newHandlerDefaultNames[givenCommand];   // can throw exception when key found TODO
+        // SERVICE NEW HANDLER
 
-            using var scope = _serviceProvider.CreateScope();
+        var defaultHandlerName = _newHandlerDefaultNames[givenCommand];   // can throw exception when key found - will change into alias resolver
 
-            var handler = scope.ServiceProvider.GetKeyedService<IHandler>(defaultHandlerName);   // this command is not keyed service key
+        using var scope = _serviceProvider.CreateScope();
 
-            if (handler != null)
+        var handler = scope.ServiceProvider.GetKeyedService<IHandler>(defaultHandlerName);
+
+        if (handler != null)
+        {
+            var handlerResult = await handler.HandleAsync(givenParameters);
+
+            if (handlerResult is CommandHandlerResult commandHandlerResult)
             {
-                var handlerResult = await handler.HandleAsync(givenParameters);
+                var result = commandHandlerResult.ResultData;
+
 
                 return new CommandLineProcessorResult
                 {
                     Message = handlerResult.Message,
                     Success = handlerResult.Success,
-                    //Result = handlerResult., // command & query registered separate logic to build
-                    ExceptionMessage = handlerResult.ExceptionMessage,
+                    Result = commandHandlerResult.ResultData,
                     PostProcess = null
                 };
             }
-        //}
+
+            if (handlerResult is QueryHandlerResult queryHandlerResult)
+            {
+                var stringTable = queryHandlerResult.ResultData;
+                var sb = new StringBuilder();
+
+                foreach (var line in stringTable)
+                    sb.AppendLine(line);                
+
+                return new CommandLineProcessorResult
+                {
+                    Message = handlerResult.Message,
+                    Success = handlerResult.Success,
+                    Result = sb.ToString(),
+                    PostProcess = null
+                };
+            }
+        }   
 
         return new NotResolvedCommandLineProcessorResult(commandLine);        
     }

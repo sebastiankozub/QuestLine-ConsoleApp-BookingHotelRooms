@@ -48,33 +48,34 @@ public interface IHandler
 /// </summary>
 /// <typeparam name="T">Type parameters is model returned by HandleInternalAsync</typeparam>
 /// <param name="defaultHandlerName"></param>
-public abstract class CommandHandler<T>(string defaultHandlerName) : IHandler //where T : struct
+public abstract class CommandHandler<T>(string defaultHandlerName) : IHandler where T : struct    //  // not everything  Async
 {
     public string DefaultHandlerName { get { return _defaultHandlerName; } }
 
     protected readonly string _defaultHandlerName = defaultHandlerName;
 
-    public abstract Task<CommandHandlerResult> ResolveCommandHandlerInternalResult(object internalHandlerResult, Exception? internalHandlerException = null);
+    public abstract Task<CommandHandlerResult> BuildResultFrom(T internalHandlerResult);
 
-    protected abstract Task<Dictionary<string, IEnumerable<object>>> BuildParametersForHandleInternalAsync(string[] parameters);
+    protected abstract Task<Dictionary<string, IEnumerable<object>>> BuildParametersForHandleInternal(string[] parameters);
 
     protected abstract Task<T> HandleInternalAsync(Dictionary<string, IEnumerable<object>> parametersDictionary);
 
-    private async Task<CommandHandlerResult> CatchHandleInternalAsync(string[] parameters)
+    private async Task<IHandlerResult> CatchHandleInternalAsync(string[] parameters)
     {
-        Exception? internalHandlerException;
-        T internalHandlerResult;
-
         try
         {
-            var parametersDictionary = await BuildParametersForHandleInternalAsync(parameters);
-            internalHandlerResult = await HandleInternalAsync(parametersDictionary);
-            return await ResolveCommandHandlerInternalResult(internalHandlerResult);
+            var parametersDictionary = await BuildParametersForHandleInternal(parameters);  
+            var internalHandlerResult = await HandleInternalAsync(parametersDictionary);
+            return await BuildResultFrom(internalHandlerResult);
         }
-        catch (Exception exception)
+        catch (Exception ex)
         {
-            internalHandlerException = exception;
-            return await ResolveCommandHandlerInternalResult(new object(), internalHandlerException);  // separate method returning CommandHandlerErrorResult
+            return await Task.FromResult(new ExceptionHandlerResult()
+            {
+                Success = false,
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType(),
+            });
         }
     }
 
@@ -84,54 +85,34 @@ public abstract class CommandHandler<T>(string defaultHandlerName) : IHandler //
     }
 }
 
-
-public abstract class QueryHandler<T>(string defaultHandlerName) : IHandler
+public abstract class QueryHandler<T>(string defaultHandlerName) : IHandler where T : notnull
 {
     public string DefaultHandlerName { get { return _defaultHandlerName; } }
 
     protected readonly string _defaultHandlerName = defaultHandlerName;
 
-    public async virtual Task<QueryHandlerResult> ResolveCommandHandlerInternalResult(QueryHandlerInternalResult<T> internalHandlerResult)
+    public abstract Task<IHandlerResult> BuildResultFrom(T internalHandlerResult);
+
+    protected abstract Task<Dictionary<string, IEnumerable<object>>> BuildParametersForHandleInternal(string[] parameters);
+
+    protected abstract Task<T> HandleInternalAsync(Dictionary<string, IEnumerable<object>> parametersDictionary);
+
+    private async Task<IHandlerResult> CatchHandleInternalAsync(string[] parameters)
     {
-        var result = new QueryHandlerResult()
-        {
-            ExceptionType = internalHandlerResult.Exception?.GetType(),
-            ExceptionMessage = internalHandlerResult.Exception?.Message,
-            //ResultData = internalHandlerResult.Result?.ToString(),    // here for Query more complicated logic then command
-            Success = internalHandlerResult.Success,
-            Message = "Additional info",
-            PostResultAction = null
-        };
-        return await Task.FromResult<QueryHandlerResult>(result);
-    }
-
-    protected abstract Task<Dictionary<string, IEnumerable<object>>> BuildParametersForHandleInternalAsync(string[] parameters);
-
-    protected abstract Task<QueryHandlerInternalResult<T>> HandleInternalAsync(Dictionary<string, IEnumerable<object>> parametersDictionary);
-
-    private async Task<QueryHandlerResult> CatchHandleInternalAsync(string[] parameters)
-    {
-        Exception? exc = null;
-        QueryHandlerInternalResult<T>? internalHandlerResult = null;
-
         try
         {
-            var parametersDictionary = await BuildParametersForHandleInternalAsync(parameters);
-            internalHandlerResult = await HandleInternalAsync(parametersDictionary);
+            var parametersDictionary = await BuildParametersForHandleInternal(parameters);
+            var internalHandlerResult = await HandleInternalAsync(parametersDictionary);
+            return await BuildResultFrom(internalHandlerResult);
         }
-        catch (Exception exception)
+        catch (Exception ex)
         {
-            exc = exception;
-        }
-
-        if (internalHandlerResult is null)
-            return new QueryHandlerResult
-            {
+            return await Task.FromResult(new ExceptionHandlerResult() { 
                 Success = false,
-                ExceptionMessage = exc?.Message
-            };
-        else
-            return await ResolveCommandHandlerInternalResult(internalHandlerResult);
+                ExceptionMessage = ex.Message,
+                ExceptionType = ex.GetType(), 
+            });
+        }
     }
 
     public async Task<IHandlerResult> HandleAsync(string[] parameters)
@@ -139,7 +120,7 @@ public abstract class QueryHandler<T>(string defaultHandlerName) : IHandler
         return await CatchHandleInternalAsync(parameters);
     }
 
-    public abstract Task<T> HandleInternalAsync(string[] parameters);
+    
 
 }
 

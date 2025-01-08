@@ -3,23 +3,28 @@ using BookingData.Model;
 
 namespace ConsoleBookingApp.CommandHandler;
 
-//public class AutoQueryHandler(IRoomAvailabilityService roomAvailabilityService) : QueryHandler<QueryHandlerInternalResult<List<Booking>>>("TestIfAutoAdded")
-//{
-//    private readonly IRoomAvailabilityService _roomAvailabilityService = roomAvailabilityService;
+public class AutoQueryHandler(IRoomAvailabilityService roomAvailabilityService) : QueryHandler<List<Booking>>("QueryAutoAdded")
+{
+    private readonly IRoomAvailabilityService _roomAvailabilityService = roomAvailabilityService;
 
+    public async override Task<IHandlerResult> BuildResultFrom(List<Booking> internalHandlerResulttt)
+    {
+        return await Task.FromResult(new QueryHandlerResult()
+        {
+            Success = true,
+            ResultData = ["1", "1", "1"]
+        });       
+    }
 
-//    public override Task<QueryHandlerInternalResult<List<Booking>>> HandleInternalAsync(string[] parameters)
-//    {
-//        throw new NotImplementedException();
-//    }
+    protected async override Task<Dictionary<string, IEnumerable<object>>> BuildParametersForHandleInternal(string[] parameters)
+    {
+        var parametersDictionary = new Dictionary<string, IEnumerable<object>>();
+        return await Task.FromResult(parametersDictionary);
+    }
 
-//    protected override Task<Dictionary<string, IEnumerable<object>>> BuildParametersForHandleInternalAsync(string[] parameters)
-//    {
-//        throw new NotImplementedException();
-//    }
+    protected async override Task<List<Booking>> HandleInternalAsync(Dictionary<string, IEnumerable<object>> parametersDictionary)
+    {
 
-//    protected override Task<QueryHandlerInternalResult<QueryHandlerInternalResult<List<Booking>>>> HandleInternalAsync(Dictionary<string, IEnumerable<object>> parametersDictionary)
-//    {
-//        throw new NotImplementedException();
-//    }
-//}
+        return await Task.FromResult(new List<Booking>());
+    }
+}
