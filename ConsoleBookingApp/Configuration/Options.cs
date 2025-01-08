@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.Extensions.Options;
+using System.ComponentModel.DataAnnotations;
 
 namespace ConsoleBookingApp.Configuration;
 
@@ -25,6 +26,10 @@ public class UserInterfaceOptions
     [Required]
     [MinLength(1)]
     public required string CommandPrompt { get; set; }
+
+    [Required]
+    [ValidateObjectMembers]
+    public required UserInterfaceCommandsOptions CommandsAliases { get; set; }
 }
 
 public class UserInterfaceCommandsOptions

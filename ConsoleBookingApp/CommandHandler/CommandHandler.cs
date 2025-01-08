@@ -37,7 +37,7 @@ public abstract class OldCommandHandler(string defaultCommandName) : IOldCommand
 
 // new approach  
 // servicing Command and Query 
-interface IHandler<IHandlerResult>
+public interface IHandler<IHandlerResult>
 {
     string DefaultHandlerName { get; }
     Task<IHandlerResult> HandleAsync(string[] parameters);

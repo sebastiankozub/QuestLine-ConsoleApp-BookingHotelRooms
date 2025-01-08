@@ -1,5 +1,6 @@
 ﻿using ConsoleBookingApp.CommandHandler;
 using ConsoleBookingApp.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace ConsoleBookingApp.UserInterface;
@@ -7,20 +8,27 @@ namespace ConsoleBookingApp.UserInterface;
 internal class CommandLineProcessor
 {
     private readonly ICommandLineParser _parser;
-    private readonly Dictionary<string, IOldCommandHandler> _commandLineHandlers;
+    private readonly Dictionary<string, IOldCommandHandler> _oldCommandLineHandlers;
+    private readonly Dictionary<string, IHandler<IHandlerResult>> _handlers;
 
     private readonly string _helpCommand;
     private readonly string _exitCommand;
+
 
     private readonly UserInterfaceCommandsOptions _uiCommandsOptions;
 
     private readonly Action<int>? _closeApplicationAction;
 
-    public CommandLineProcessor(ICommandLineParser parser, Dictionary<string, IOldCommandHandler> handlers,
-        IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions, Action<int>? closeApplicationAction)
+    private readonly IServiceProvider _serviceProvider;
+
+    public CommandLineProcessor(ICommandLineParser parser, Dictionary<string, IOldCommandHandler> oldCommandHandlers, Dictionary<string, IHandler<IHandlerResult>> handlers,
+        IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions, Action<int>? closeApplicationAction, IServiceProvider serviceProvider)
     {
+        _serviceProvider = serviceProvider;
+
         _parser = parser;
-        _commandLineHandlers = handlers;
+        _handlers = handlers;
+        _oldCommandLineHandlers = oldCommandHandlers;
 
         _uiCommandsOptions = userInterfaceCommandsOptions.Value;
 
@@ -43,17 +51,15 @@ internal class CommandLineProcessor
             return new InvalidFormatCommandLineProcessorResult(_helpCommand);        
 
         if (givenCommand == _helpCommand)        
-            return new HelpCommandLineProcessorResult(_commandLineHandlers);
+            return new HelpCommandLineProcessorResult(_oldCommandLineHandlers);
         
         if (givenCommand == _exitCommand)        
             return new ExitCommandLineProcessorResult(givenCommand, _closeApplicationAction);
 
-        // TODO The Dictionary is a list of Transient instances but not reinstatined as new transient but taken instantinated from dictionaty
-        // TODO refactor to use CommandLineAliasResolver or better naming BookingAppAliasResolver : IAliasResolver?
-        // given command or alias Resolve() return default command string  - null reference warning also cleaned then
+        //old handlers
         if ((IsAlias(givenCommand, out var commandFromAlias) 
-            && _commandLineHandlers.TryGetValue(commandFromAlias, out var commandHandler))  // not possible to null reference exception
-            || _commandLineHandlers.TryGetValue(givenCommand, out commandHandler))  
+            && _oldCommandLineHandlers.TryGetValue(commandFromAlias, out var commandHandler))  // not possible to null reference exception
+            || _oldCommandLineHandlers.TryGetValue(givenCommand, out commandHandler))  
         {
             var commandResult = await commandHandler.HandleAsync(givenParameters);
 
@@ -67,28 +73,29 @@ internal class CommandLineProcessor
             };
         }
 
-        // TODO -- change dictionary and handlers to real transient
-        // now registered as transient but work like singleton
-        // not a problem for console app but maybe some day we want ICommandHandlers be triggered from different places
+        // new handlers
+        if (IsAlias(givenCommand, out commandFromAlias))
+        {
+            using var scope = _serviceProvider.CreateScope();
 
-        //using (var scope = _serviceProvider.CreateScope())
-        //{
-        //    var handlers = scope.ServiceProvider.GetServices<IOldCommandHandler>();
-        //    var handler = handlers.FirstOrDefault(h => input.StartsWith(h.CommandName));
+            var handler = scope.ServiceProvider.GetKeyedService<IHandler<IHandlerResult>>(commandFromAlias);   // this command is not keyed service key
 
-        //    if (handler != null)
-        //    {
-        //        string commandData = input.Substring(handler.CommandName.Length).Trim();
-        //        await handler.HandleAsync(commandData);
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine("Unknown command.");
-        //    }
-        //}
+            if (handler != null)
+            {
+                var handlerResult = await handler.HandleAsync(givenParameters);
 
-        else
-            return new NotResolvedCommandLineProcessorResult(commandLine);        
+                return new CommandLineProcessorResult
+                {
+                    Message = handlerResult.Message,
+                    Success = handlerResult.Success,
+                    //Result = handlerResult., // command & query registered separate
+                    ExceptionMessage = handlerResult.ExceptionMessage,
+                    PostProcess = null
+                };
+            }
+        }
+
+        return new NotResolvedCommandLineProcessorResult(commandLine);        
     }
     
     private bool IsAlias(string alias, out string? defaultCommand)   

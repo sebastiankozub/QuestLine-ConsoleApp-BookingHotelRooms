@@ -69,15 +69,41 @@ internal class ConsoleBookingAppEntry
                     return dataContext;
                 });
 
-            // CONSOLE COMMAND HANDLERS   // TODO - make real transient
+            // CONSOLE COMMAND HANDLERS  // Substituting with new command handlers
             var commandLineHandlers = typeof(ConsoleBookingAppEntry).Assembly.GetTypes()
                 .Where(x => !x.IsAbstract && x.IsClass && x.GetInterface(nameof(IOldCommandHandler)) == typeof(IOldCommandHandler));
             foreach (var commandLineHandler in commandLineHandlers)
                 services.Add(new ServiceDescriptor(typeof(IOldCommandHandler), commandLineHandler, ServiceLifetime.Transient));
-
             services
                 .AddTransient(sp => sp.GetServices<IOldCommandHandler>().ToDictionary(h => h.DefaultCommandName))
                 .AddSingleton<ConsoleAppInterface>();
+
+            // NEW COMMAND HANDLERS 
+            var handlers = typeof(ConsoleBookingAppEntry).Assembly.GetTypes()
+                .Where(x => !x.IsAbstract && x.IsClass && x.GetInterface(nameof(IHandler<IHandlerResult>)) == typeof(IHandler<IHandlerResult>));
+
+            foreach (var handler in handlers)            
+                services.AddKeyedTransient<IHandler<IHandlerResult>>(handler.Name);            
+
+            services
+                .AddSingleton<Dictionary<string, string>>(sp => {
+                    var defautCommandNames = new Dictionary<string, string>();
+                    foreach (var handler in handlers)
+                    {
+                        var h = sp.GetKeyedService<IHandler<IHandlerResult>>(handler.Name);
+                        var defautCommandName = h?.DefaultHandlerName;
+
+                        if (defautCommandName is not null)
+                            defautCommandNames.Add(defautCommandName, nameof(h));
+                    }
+                    return defautCommandNames;
+                });
+
+            // NOT NEEDED
+            services
+                .AddTransient(sp => sp.GetServices<IHandler<IHandlerResult>>().ToDictionary((k) => k.DefaultHandlerName))
+                .AddSingleton<ConsoleAppInterface>();
+
 
             // BOOKING APP DOMAIN
             services.AddTransient<IRoomAvailabilityService, RoomAvailabilityService>();
@@ -106,7 +132,3 @@ internal class ConsoleBookingAppEntry
         Environment.Exit(code);
     }
 }
-
-
-
-
