@@ -68,6 +68,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BookingApp\BookingApp.csproj" />
     <ProjectReference Include="..\BookingData\BookingData.csproj" />
+    <ProjectReference Include="..\QuickConsole\QuickConsole.csproj" />
   </ItemGroup>
 
   <ItemGroup>

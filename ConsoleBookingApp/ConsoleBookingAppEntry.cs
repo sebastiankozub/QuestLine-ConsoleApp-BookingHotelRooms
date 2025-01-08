@@ -5,6 +5,7 @@ using ConsoleBookingApp.Configuration;
 using ConsoleBookingApp.CommandHandler;
 using BookingData;
 using BookingApp.Service;
+using QuickConsole;
 
 namespace ConsoleBookingApp;
 
@@ -101,8 +102,10 @@ internal class ConsoleBookingAppEntry
 
             // NOT NEEDED
             services
-                .AddTransient(sp => sp.GetServices<IHandler<IHandlerResult>>().ToDictionary((k) => k.DefaultHandlerName))
-                .AddSingleton<ConsoleAppInterface>();
+                .AddTransient(sp => sp.GetServices<IHandler<IHandlerResult>>().ToDictionary((k) => k.DefaultHandlerName));
+
+
+            services.AddQuickConsole();//.AddQuickCommandLineArguments(args);
 
 
             // BOOKING APP DOMAIN
@@ -111,9 +114,14 @@ internal class ConsoleBookingAppEntry
             // BUILD & RUN
             var serviceProvider = services.BuildServiceProvider();
 
+
+
             // DATA LAYER INITIALIZATION                     
             var dataContext = serviceProvider.GetRequiredService<IDataContext>();  // TODO check NuGet/HostInitActions for asyncronous initialization
             await dataContext.Initialization;
+
+
+
 
             // RUN
             var consoleAppInterface = serviceProvider.GetRequiredService<ConsoleAppInterface>();
