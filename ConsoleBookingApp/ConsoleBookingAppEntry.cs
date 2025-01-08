@@ -74,18 +74,23 @@ internal class ConsoleBookingAppEntry
             var commandLineHandlers = typeof(ConsoleBookingAppEntry).Assembly.GetTypes()
                 .Where(x => !x.IsAbstract && x.IsClass && x.GetInterface(nameof(IOldCommandHandler)) == typeof(IOldCommandHandler));
             foreach (var commandLineHandler in commandLineHandlers)
+            {
                 services.Add(new ServiceDescriptor(typeof(IOldCommandHandler), commandLineHandler, ServiceLifetime.Transient));
+            }
             services
                 .AddTransient(sp => sp.GetServices<IOldCommandHandler>().ToDictionary(h => h.DefaultCommandName))
                 .AddSingleton<ConsoleAppInterface>();
+
+
 
             // NEW COMMAND HANDLERS 
             var handlers = typeof(ConsoleBookingAppEntry).Assembly.GetTypes()
                 .Where(x => !x.IsAbstract && x.IsClass && x.GetInterface(nameof(IHandler<IHandlerResult>)) == typeof(IHandler<IHandlerResult>));
 
-            foreach (var handler in handlers)            
-                services.AddKeyedTransient<IHandler<IHandlerResult>>(handler.Name);            
-
+            foreach (var handler in handlers)
+            {
+                services.AddKeyedTransient<IHandler<IHandlerResult>>(handler.Name);
+            }
             services
                 .AddSingleton<Dictionary<string, string>>(sp => {
                     var defautCommandNames = new Dictionary<string, string>();
@@ -100,9 +105,6 @@ internal class ConsoleBookingAppEntry
                     return defautCommandNames;
                 });
 
-            // NOT NEEDED
-            services
-                .AddTransient(sp => sp.GetServices<IHandler<IHandlerResult>>().ToDictionary((k) => k.DefaultHandlerName));
 
 
             services.AddQuickConsole();//.AddQuickCommandLineArguments(args);

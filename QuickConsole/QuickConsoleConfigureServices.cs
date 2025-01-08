@@ -2,22 +2,24 @@
 
 namespace QuickConsole;
 
-public static class QuickConsoleConfigureServicesExtension
+public static class QuickConsoleConfigureServices
 {
     public static IServiceCollection AddQuickConsole(this IServiceCollection services)
     {
-        services.AddSingleton<QuickConsoleEntryPoint>(
-            sp =>
-        {
-            if (sp.GetService<QuickConsoleRunArgsManager>() != null)
+        services.AddSingleton<QuickConsoleEntryPoint>(sp =>
             {
                 var argsManager = sp.GetService<QuickConsoleRunArgsManager>();
-                return new QuickConsoleEntryPoint(argsManager);
-            }
 
-            return new QuickConsoleEntryPoint();
-        });
+                if (argsManager != null)                
+                    return new QuickConsoleEntryPoint(argsManager);                
 
+                return new QuickConsoleEntryPoint();
+            });
+
+        //registering handlers from by main assebly
+        // var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+        services.AddSingleton<IQuickCommandLineParser, QuickCommandLineParser>();
         return services;
     }
 

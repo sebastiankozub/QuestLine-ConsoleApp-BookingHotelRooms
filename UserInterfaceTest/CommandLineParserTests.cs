@@ -28,7 +28,7 @@ public class CommandLineParserTests
         Assert.Multiple(() =>
         {
             Assert.That(CommandName, Is.EqualTo("AddBooking"));
-            Assert.That(Parameters.Length, Is.EqualTo(2));
+            Assert.That(Parameters, Has.Length.EqualTo(2));
             Assert.That(Parameters[0], Is.EqualTo("John Doe"));
         });
     }
@@ -41,7 +41,7 @@ public class CommandLineParserTests
         Assert.Multiple(() =>
         {
             Assert.That(CommandName, Is.EqualTo("AddBooking"));
-            Assert.That(Parameters.Length, Is.EqualTo(2));
+            Assert.That(Parameters, Has.Length.EqualTo(2));
             Assert.That(Parameters[0], Is.EqualTo(""));
             Assert.That(Parameters[1], Is.EqualTo(""));
         });
@@ -61,7 +61,7 @@ public class CommandLineParserTests
         Assert.Multiple(() =>
         {
             Assert.That(CommandName, Is.EqualTo(""));
-            Assert.That(Parameters.Length, Is.EqualTo(0));
+            Assert.That(Parameters, Is.Empty);
         });
     }
 }

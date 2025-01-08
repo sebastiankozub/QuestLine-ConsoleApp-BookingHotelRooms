@@ -1,16 +1,30 @@
-﻿namespace QuickConsole
+﻿namespace QuickConsole;
+
+public  class QuickConsoleEntryPoint
 {
-    public  class QuickConsoleEntryPoint
+    private readonly QuickConsoleRunArgsManager _argsParser;
+
+    public QuickConsoleEntryPoint()
+    {            
+    }
+
+    public QuickConsoleEntryPoint(QuickConsoleRunArgsManager argsParser)
     {
+        _argsParser = argsParser;
+    }
 
-        public QuickConsoleEntryPoint()
+
+
+    public void Run()
+    {
+        if (_argsParser != null)
         {
-            ;
+            _argsParser.Parse();
         }
-
-        public QuickConsoleEntryPoint(QuickConsoleRunArgsManager argsParser)
+        else 
         {
-            ;
+            ;// application will not consider command line params
         }
     }
 }
+
