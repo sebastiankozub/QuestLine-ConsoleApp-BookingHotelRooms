@@ -2,7 +2,7 @@
 using BookingData.Model;
 using QuickConsole.Handler;
 
-namespace ConsoleBookingApp.CommandHandler;
+namespace ConsoleBookingApp.Handlers;
 
 public class AutoQueryHandler(IRoomAvailabilityService roomAvailabilityService) : QueryHandler<List<Booking>>("QueryAutoAdded")
 {

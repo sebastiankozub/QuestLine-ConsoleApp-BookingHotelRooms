@@ -1,7 +1,7 @@
 ﻿using BookingApp.Service;
 using QuickConsole.Handler;
 
-namespace ConsoleBookingApp.CommandHandler;
+namespace ConsoleBookingApp.Handlers;
 
 public class TestCommandHandler(IRoomAvailabilityService roomAvailabilityService) : CommandHandler<bool>("TestCommand")
 {

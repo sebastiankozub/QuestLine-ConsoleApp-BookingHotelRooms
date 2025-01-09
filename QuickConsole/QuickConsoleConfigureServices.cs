@@ -5,11 +5,11 @@ namespace QuickConsole;
 
 public static class QuickConsoleConfigureServices
 {
-    public static IServiceCollection AddQuickConsole(this IServiceCollection services)
+    public static IServiceCollection AddQuickConsole(this IServiceCollection services, bool useRunCommandArgsManager = true)
     {
         services.AddSingleton<QuickConsoleEntryPoint>(sp =>
             {
-                var argsManager = sp.GetService<QuickConsoleRunArgsManager>();
+                var argsManager = sp.GetService<QuickRunCommandArgsManager>();
 
                 if (argsManager != null)                
                     return new QuickConsoleEntryPoint(argsManager);                
@@ -17,7 +17,19 @@ public static class QuickConsoleConfigureServices
                 return new QuickConsoleEntryPoint();
             });
 
-        services.AddSingleton<IQuickCommandLineParser, QuickCommandLineParser>();
+        services.AddSingleton<IQuickCommandLineParser, QuickLineCommandParser>();
+
+        if (useRunCommandArgsManager)
+        {
+
+
+
+            services.AddQuickCommandLineArguments(Environment.GetCommandLineArgs());
+        }
+
+
+
+
         return services;
     }
 
@@ -58,11 +70,12 @@ public static class QuickConsoleConfigureServices
     public static IServiceCollection AddQuickCommandLineArguments(this IServiceCollection services, string[] consoleRunArgs)
     {
         services.AddSingleton(sp => {
-            var options = new QuickConsoleRunArgs { args = consoleRunArgs };
+            var options = new QuickRunCommandArgs { args = consoleRunArgs };
             return options;
         });
-        
-        services.AddSingleton<QuickConsoleRunArgsManager>();
+        services.AddSingleton<IQuickRunCommandnArgsParser>(sp => 
+            new QuickRunCommandArgsParser(sp.GetRequiredService<QuickRunCommandArgs>(), "--"));
+        services.AddSingleton<QuickRunCommandArgsManager>();
 
         return services;
     }

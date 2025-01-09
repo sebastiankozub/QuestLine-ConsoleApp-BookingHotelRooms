@@ -7,7 +7,7 @@ internal interface IQuickCommandLineParser
     (string CommandName, string[] Parameters) Parse(string command);
 }
 
-internal class QuickCommandLineParser : IQuickCommandLineParser
+internal class QuickLineCommandParser : IQuickCommandLineParser
 {
     public (string CommandName, string[] Parameters) Parse(string command)
     {

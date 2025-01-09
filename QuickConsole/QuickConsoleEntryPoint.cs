@@ -2,13 +2,13 @@
 
 public  class QuickConsoleEntryPoint
 {
-    private readonly QuickConsoleRunArgsManager? _argsParser;
+    private readonly QuickRunCommandArgsManager? _argsParser;
 
     public QuickConsoleEntryPoint()
     {            
     }
 
-    public QuickConsoleEntryPoint(QuickConsoleRunArgsManager argsParser)
+    public QuickConsoleEntryPoint(QuickRunCommandArgsManager argsParser)
     {
         _argsParser = argsParser;
     }
