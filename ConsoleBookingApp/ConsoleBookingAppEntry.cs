@@ -1,11 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
-using ConsoleBookingApp.UserInterface;
 using Microsoft.Extensions.Configuration;
 using ConsoleBookingApp.Configuration;
-using ConsoleBookingApp.CommandHandler;
 using BookingData;
 using BookingApp.Service;
 using QuickConsole;
+using QuickConsole.Configuration;
 
 namespace ConsoleBookingApp;
 
@@ -27,6 +26,7 @@ internal class ConsoleBookingAppEntry
 
             var configuration = configBuilder.Build();
 
+
             // DEPENDENCY INJECTION 
             var services = new ServiceCollection()
                 .AddSingleton<IConfigurationRoot>(configuration);
@@ -40,27 +40,14 @@ internal class ConsoleBookingAppEntry
             if (mySecondClass is not null)
                 services.AddSingleton<SecondOptions>(mySecondClass);
 
-            services.AddOptions<UserInterfaceOptions>()
-                .Bind(configuration.GetSection(UserInterfaceOptions.UserInterfaceSegmentName))
-                .ValidateDataAnnotations()
-                .ValidateOnStart();
-
             services.AddOptions<UserInterfaceCommandsOptions>()
-                .Bind(configuration.GetSection(UserInterfaceCommandsOptions.CommandsSegmentName))
-                .ValidateDataAnnotations()
-                .ValidateOnStart();
+    .Bind(configuration.GetSection(UserInterfaceCommandsOptions.CommandsSegmentName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
-            // CONSOLE APP DOMAIN
-            services
-                .AddSingleton<ICommandLineParser, CommandLineParser>()
-                .AddSingleton<ConsoleBookingAppArgsParser>()
-                .AddSingleton(new Action<int>(ExitApplication))
-                .AddSingleton<CommandLineProcessor>()
-                .AddSingleton(sp => {
-                    var options = new ConsoleAppArgs { args = args };
-                    return options;
-                });
 
+
+            // BOOKING APP DOMAIN
             // DATALAYER
             services
                 .AddSingleton<IDataContext>(sp => {
@@ -70,27 +57,17 @@ internal class ConsoleBookingAppEntry
                     return dataContext;
                 });
 
-            // CONSOLE COMMAND HANDLERS  // Substituting with new command handlers
-            var commandLineHandlers = typeof(ConsoleBookingAppEntry).Assembly.GetTypes()
-                .Where(x => !x.IsAbstract && x.IsClass && x.GetInterface(nameof(IOldCommandHandler)) == typeof(IOldCommandHandler));
-
-            foreach (var commandLineHandler in commandLineHandlers)
-            {
-                services.Add(new ServiceDescriptor(typeof(IOldCommandHandler), commandLineHandler, ServiceLifetime.Transient));
-            }
-            services
-                .AddTransient(sp => sp.GetServices<IOldCommandHandler>().ToDictionary(h => h.DefaultCommandName))
-                .AddSingleton<ConsoleAppInterface>();
-
-
-            services
-                .AddQuickConsole()
-                .AddQuickHandlers();
-                //.AddQuickCommandLineArguments(args);
-
-
             // BOOKING APP DOMAIN
+            // SERVICE
             services.AddTransient<IRoomAvailabilityService, RoomAvailabilityService>();
+
+
+
+
+            services
+                .AddQuickConsole(args, new ConsoleConfiguration { UseRunCommandArgsManager = true })
+                .AddQuickHandlers();
+                //.AddQuickRunCommandArgs(args);
 
             // BUILD & RUN
             var serviceProvider = services.BuildServiceProvider();
@@ -99,9 +76,8 @@ internal class ConsoleBookingAppEntry
             var dataContext = serviceProvider.GetRequiredService<IDataContext>();  // TODO check NuGet/HostInitActions for asyncronous initialization
             await dataContext.Initialization;
 
-            // RUN
-            var consoleAppInterface = serviceProvider.GetRequiredService<ConsoleAppInterface>();
-            await consoleAppInterface.RunInterfaceAsync();
+            // Run QuickConsole
+            await serviceProvider.RunQuickConsole();
         }
         catch (Exception ex)
         {
@@ -111,8 +87,5 @@ internal class ConsoleBookingAppEntry
         }
     }
 
-    public static void ExitApplication(int code)
-    {
-        Environment.Exit(code);
-    }
+
 }

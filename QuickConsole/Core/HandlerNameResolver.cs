@@ -1,18 +1,18 @@
 using System.Text.RegularExpressions;
 
-namespace QuickConsole;
+namespace QuickConsole.Core;
 
 interface IQuickHandlerNameResolver
 {
     string Resolve(string command);
 }
 
-internal class QuickHandlerNameResolver(QuickHandlerAliasStore quickHandlerAliasStore) : IQuickHandlerNameResolver
+internal class HandlerNameResolver(QuickHandlerAliasStore quickHandlerAliasStore) : IQuickHandlerNameResolver
 {
     private readonly QuickHandlerAliasStore _quickHandlerAliasStore = quickHandlerAliasStore;
     public string Resolve(string command)
     {
-        
+
         return "CommandName";
     }
 }

@@ -1,7 +1,7 @@
-﻿using ConsoleBookingApp.CommandHandler;
+﻿using QuickConsole.OldCommandHandler;
 using System.Text;
 
-namespace ConsoleBookingApp.UserInterface;
+namespace QuickConsole.Core;
 
 internal class CommandLineProcessorResult
 {

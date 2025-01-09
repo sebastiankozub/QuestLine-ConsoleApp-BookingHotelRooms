@@ -1,10 +1,6 @@
-﻿// Using CQRS convention most of IOldCommandHandler implementations are query handlers
-// In the IOldCommandHandler interface command simply stands for user executed command line action
-// it was ICommandLineHandler at the beginning but I decide that CommandLineProcessor is the last step where this command is command line
-// left as it is for now - refactor when more functionalities mixing query and command handlers will be added
-using System;
+﻿using System;
 
-namespace ConsoleBookingApp.CommandHandler;
+namespace QuickConsole.OldCommandHandler;
 
 public interface IOldCommandHandler
 {

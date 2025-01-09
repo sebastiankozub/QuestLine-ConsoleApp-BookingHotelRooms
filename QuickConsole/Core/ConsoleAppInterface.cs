@@ -1,8 +1,8 @@
-﻿using ConsoleBookingApp.Configuration;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using QuickConsole;
+using QuickConsole.Options;
 
-namespace ConsoleBookingApp.UserInterface;
+namespace QuickConsole.Core;
 
 internal class ConsoleAppInterface(QuickConsoleEntryPoint c, CommandLineProcessor processor, IOptions<UserInterfaceOptions> userInterfaceOptions, IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions)
 {

@@ -1,4 +1,4 @@
-﻿namespace ConsoleBookingApp.CommandHandler;
+﻿namespace QuickConsole.OldCommandHandler;
 
 public class OldCommandHandlerResult : IOldCommandHandlerResult
 {

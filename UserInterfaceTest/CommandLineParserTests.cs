@@ -1,15 +1,15 @@
-using ConsoleBookingApp.UserInterface;
+using QuickConsole.Core;
 
 namespace UserInterfaceTest;
 
 public class CommandLineParserTests
 {
-    private CommandLineParser _commandLineParser;
+    private LineCommandParser _commandLineParser;
 
     [OneTimeSetUp]
     public void Setup()
     {
-        _commandLineParser = new CommandLineParser();
+        _commandLineParser = new LineCommandParser();
     }
 
     [TestCase("AddBooking(John Doe,2022-01-01)")]

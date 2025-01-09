@@ -1,7 +1,7 @@
-﻿namespace QuickConsole;
+﻿namespace QuickConsole.RunCommand;
 
 
-public class QuickRunCommandArgsManager
+public class RunCommandArgsManager
 {
     private readonly string[] _args;
 
@@ -9,12 +9,17 @@ public class QuickRunCommandArgsManager
 
     private readonly Dictionary<string, string> _runArgsDict = new Dictionary<string, string>();
 
-    public QuickRunCommandArgsManager(QuickRunCommandArgs commandRunArgs, IQuickRunCommandnArgsParser runArgsParser)
+    public RunCommandArgsManager(QuickRunCommandArgs commandRunArgs, IQuickRunCommandnArgsParser runArgsParser)
     {
         _args = commandRunArgs.args;
         _runArgsParser = runArgsParser;
 
         _runArgsDict = runArgsParser.Parse();
+    }
+
+    public IList<string> GetAllArgs()
+    {
+        return _runArgsParser.GetAllArgs();
     }
 
     //private readonly string _hotelsArgsSwitch = "hotels";
@@ -26,7 +31,7 @@ public class QuickRunCommandArgsManager
         //var bookingRepositoryFilename = GetParameterValue(_bookingsArgsSwitch);
 
         //if (hotelRepositoryFilename is null || bookingRepositoryFilename is null)
-            throw new ArgumentException("One or more underlying datafile names or parameters' switch not given properly.");
+        throw new ArgumentException("One or more underlying datafile names or parameters' switch not given properly.");
 
         //return (hotelRepositoryFilename, bookingRepositoryFilename);
     }

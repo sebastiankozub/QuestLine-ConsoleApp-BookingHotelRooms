@@ -1,16 +1,17 @@
-﻿using ConsoleBookingApp.CommandHandler;
-using ConsoleBookingApp.Configuration;
+﻿using QuickConsole.OldCommandHandler;
+using QuickConsole.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using System.Text;
 using QuickConsole.Handler;
-using QuickConsole; 
+using QuickConsole;
+using QuickConsole.Options;
+using Microsoft.Extensions.Options;
 
-namespace ConsoleBookingApp.UserInterface;
+namespace QuickConsole.Core;
 
 internal class CommandLineProcessor
 {
-    private readonly ICommandLineParser _parser;
+    private readonly ILineCommandParser _parser;
     private readonly Dictionary<string, IOldCommandHandler> _oldCommandLineHandlers;
     private readonly Dictionary<string, IHandler> _handlers;
     private readonly Dictionary<string, string> _newHandlerDefaultNames;
@@ -24,7 +25,7 @@ internal class CommandLineProcessor
 
     private readonly IServiceProvider _serviceProvider;
 
-    public CommandLineProcessor(ICommandLineParser parser, Dictionary<string, IOldCommandHandler> oldCommandHandlers,
+    public CommandLineProcessor(ILineCommandParser parser, Dictionary<string, IOldCommandHandler> oldCommandHandlers,
         Dictionary<string, string> newHandlerDefaultNames,
         IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions, Action<int>? closeApplicationAction, IServiceProvider serviceProvider)
     {
