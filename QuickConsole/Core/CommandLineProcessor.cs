@@ -13,7 +13,7 @@ internal class CommandLineProcessor
 {
     private readonly ILineCommandParser _parser;
     private readonly Dictionary<string, IOldCommandHandler> _oldCommandLineHandlers;
-    private readonly Dictionary<string, IHandler> _handlers;
+    //private readonly Dictionary<string, IHandler> _handlers;
     private readonly Dictionary<string, string> _newHandlerDefaultNames;
 
     private readonly string _helpCommand;
@@ -47,8 +47,6 @@ internal class CommandLineProcessor
         var (givenCommand, givenParameters) = _parser.Parse(commandLine);
 
         if (string.IsNullOrEmpty(commandLine))
-            // return new EmptyCommandLineProcessorResult(_helpCommand);
-            // fulfilling one of task description constraints - maybe alias functionality when refactored will be better?
             return new ExitCommandLineProcessorResult(givenCommand, _closeApplicationAction); 
 
         if (givenCommand == null)        

@@ -2,15 +2,15 @@
 
 namespace QuickConsole;
 
-public  class QuickConsoleEntryPoint
+public  class QuickEntryPoint
 {
     private readonly RunCommandArgsManager? _argsParser;
 
-    public QuickConsoleEntryPoint()
+    public QuickEntryPoint()
     {            
     }
 
-    public QuickConsoleEntryPoint(RunCommandArgsManager argsParser)
+    public QuickEntryPoint(RunCommandArgsManager argsParser)
     {
         _argsParser = argsParser;
     }

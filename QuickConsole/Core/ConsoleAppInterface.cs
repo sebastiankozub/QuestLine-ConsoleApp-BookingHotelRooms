@@ -4,12 +4,12 @@ using QuickConsole.Options;
 
 namespace QuickConsole.Core;
 
-internal class ConsoleAppInterface(QuickConsoleEntryPoint c, CommandLineProcessor processor, IOptions<UserInterfaceOptions> userInterfaceOptions, IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions)
+internal class ConsoleAppInterface(QuickEntryPoint c, CommandLineProcessor processor, IOptions<UserInterfaceOptions> userInterfaceOptions, IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions)
 {
     private readonly CommandLineProcessor _cmdLineProcessor = processor;
     private readonly UserInterfaceOptions _userInterfaceOptions = userInterfaceOptions.Value;
 
-    private readonly QuickConsoleEntryPoint _c = c;
+    private readonly QuickEntryPoint _c = c;
 
     private readonly string _helpCommandName = userInterfaceCommandsOptions.Value.Help ?? nameof(UserInterfaceCommandsOptions.Help);
 

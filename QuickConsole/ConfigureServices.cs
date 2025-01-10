@@ -12,18 +12,18 @@ using System.Runtime.CompilerServices;
 
 namespace QuickConsole;
 
-public static class QuickConsoleConfigureServices
+public static class ConfigureServices
 {
-    public static IServiceCollection AddQuickConsole(this IServiceCollection services, string[] args, ConsoleConfiguration? quickConsoleConfiguration = null)
+    public static IServiceCollection AddQuickConsole(this IServiceCollection services, Action<int> exitLineCommand, string[] args, ConsoleConfiguration? quickConsoleConfiguration = null)
     {
-        services.AddSingleton<QuickConsoleEntryPoint>(sp =>
+        services.AddSingleton<QuickEntryPoint>(sp =>
             {
                 var argsManager = sp.GetService<RunCommandArgsManager>();
 
                 if (argsManager != null)                
-                    return new QuickConsoleEntryPoint(argsManager);                
+                    return new QuickEntryPoint(argsManager);                
 
-                return new QuickConsoleEntryPoint();
+                return new QuickEntryPoint();
             });
 
 
@@ -31,7 +31,7 @@ public static class QuickConsoleConfigureServices
         services
             .AddSingleton<ILineCommandParser, LineCommandParser>()
             .AddSingleton<ConsoleBookingAppArgsParser>()
-            .AddSingleton(new Action<int>(ExitApplication))
+            .AddSingleton(new Action<int>(exitLineCommand))
             .AddSingleton<CommandLineProcessor>();
 
 
@@ -116,7 +116,13 @@ public static class QuickConsoleConfigureServices
         return services;
     }
 
-    public static IServiceCollection AddQuickRunCommandArgs(this IServiceCollection services, IConfiguration configuration)
+
+    /// <summary>
+    /// Add QuickConsole options if you defined them in your configuration files already built.
+    /// </summary>
+    /// <param name="configuration"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddQuickOptions(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddOptions<UserInterfaceOptions>()
             .Bind(configuration.GetSection(UserInterfaceOptions.UserInterfaceSegmentName))
@@ -131,6 +137,30 @@ public static class QuickConsoleConfigureServices
         return services;
     }
 
+    /// <summary>
+    /// Add QuickConsole options if you defined them in separate configuration file.
+    /// </summary>
+    /// <param name="quickConsoleOptionsFilename">QuickConsole .json configuration file</param>
+    /// <returns></returns>
+    public static IServiceCollection AddQuickOptions(this IServiceCollection services, string quickConsoleOptionsFilename)
+    {
+        // built own configbuilder and configuration from separated file + bind to ioptions
+
+        return services;
+    }
+
+    /// <summary>
+    /// AddQuickConsole options if you defined them in a <see cref="QuickConsoleConfiguration"/>.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="quickConsoleOptions"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddQuickOptions(this IServiceCollection services, QuickConsoleConfiguration quickConsoleOptions)
+    {
+        // built own configbuilder and configuration from separated file
+
+        return services;
+    }
 
     public static async Task RunQuickConsole(this ServiceProvider serviceProvider)
     {
@@ -140,9 +170,5 @@ public static class QuickConsoleConfigureServices
     }
 
 
-    public static void ExitApplication(int code)
-    {
-        Environment.Exit(code);
-    }
 
 }
