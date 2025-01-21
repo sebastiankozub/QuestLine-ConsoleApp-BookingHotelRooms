@@ -1,7 +1,7 @@
-﻿namespace ConsoleBookingApp;
+﻿namespace QuickConsole;
 
-internal class ConsoleBookingAppArgsParser
-// too strongly conneted to BookingApp logic - finally want generic version to read args in other app also                                      
+public class ConsoleBookingAppArgsParser
+// too strongly conneted to BookingApp logic - finally want generic version to read args in other apps also                                      
 {
     private readonly string[] _args;
 
@@ -41,7 +41,7 @@ internal class ConsoleBookingAppArgsParser
     }
 }
 
-internal class ConsoleAppArgs
+public class ConsoleAppArgs
 {
     public string[] args = [];
 }

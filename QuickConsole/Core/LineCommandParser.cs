@@ -1,14 +1,13 @@
-using System;
 using System.Text.RegularExpressions;
 
-namespace ConsoleBookingApp.UserInterface;
+namespace QuickConsole.Core;
 
-internal interface ICommandLineParser
+internal interface ILineCommandParser
 {
     (string CommandName, string[] Parameters) Parse(string command);
 }
 
-internal class CommandLineParser : ICommandLineParser
+internal class LineCommandParser : ILineCommandParser
 {
     public (string CommandName, string[] Parameters) Parse(string command)
     {

@@ -1,23 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
 
-namespace ConsoleBookingApp.Configuration;
+namespace QuickConsole.Options;
 
-public class MyFirstClass
-{
-    public const string MyFirstClassSegmentName = "FirstOptions";
-
-    public required string Option1 { get; set; }
-    public int Option2 { get; set; }
-}
-
-public class SecondOptions
-{
-    public const string SecondSegmentName = "SecondOptions";
-
-    public required string SettingOne { get; set; }
-    public int SettingTwo { get; set; }
-}
 
 public class UserInterfaceOptions
 {

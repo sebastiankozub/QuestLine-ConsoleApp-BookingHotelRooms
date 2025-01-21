@@ -1,10 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
-using ConsoleBookingApp.UserInterface;
 using Microsoft.Extensions.Configuration;
 using ConsoleBookingApp.Configuration;
-using ConsoleBookingApp.CommandHandler;
 using BookingData;
 using BookingApp.Service;
+using QuickConsole;
+using QuickConsole.Configuration;
 
 namespace ConsoleBookingApp;
 
@@ -26,9 +26,23 @@ internal class ConsoleBookingAppEntry
 
             var configuration = configBuilder.Build();
 
+
+
             // DEPENDENCY INJECTION 
-            var services = new ServiceCollection()
+            var services = new ServiceCollection();
+
+
+
+
+            services
                 .AddSingleton<IConfigurationRoot>(configuration);
+
+
+
+
+
+
+
 
             // OPTIONS PATTERN & CONFIGURATION POCOS
             var myFirstClass = configuration.GetSection(MyFirstClass.MyFirstClassSegmentName).Get<MyFirstClass>();
@@ -39,59 +53,40 @@ internal class ConsoleBookingAppEntry
             if (mySecondClass is not null)
                 services.AddSingleton<SecondOptions>(mySecondClass);
 
-            services.AddOptions<UserInterfaceOptions>()
-                .Bind(configuration.GetSection(UserInterfaceOptions.UserInterfaceSegmentName))
-                .ValidateDataAnnotations()
-                .ValidateOnStart();
 
-            services.AddOptions<UserInterfaceCommandsOptions>()
-                .Bind(configuration.GetSection(UserInterfaceCommandsOptions.CommandsSegmentName))
-                .ValidateDataAnnotations()
-                .ValidateOnStart();
 
-            // CONSOLE APP DOMAIN
-            services
-                .AddSingleton<ICommandLineParser, CommandLineParser>()
-                .AddSingleton<ConsoleBookingAppArgsParser>()
-                .AddSingleton(new Action<int>(ExitApplication))
-                .AddSingleton<CommandLineProcessor>()
-                .AddSingleton(sp => {
-                    var options = new ConsoleAppArgs { args = args };
-                    return options;
-                });
-
+            // BOOKING APP DOMAIN
             // DATALAYER
             services
                 .AddSingleton<IDataContext>(sp => {
-                    var consoleArgsParser = sp.GetRequiredService<ConsoleBookingAppArgsParser>();
+                    var consoleArgsParser = sp.GetRequiredService<ConsoleBookingAppArgsParser>(); // TODO change into QuickConsole/RunCommandArgsManager one 
                     var (hotelsFilename, bookingsFilname) = consoleArgsParser.Parse();
                     var dataContext = new DataContext(hotelsFilename, bookingsFilname);
                     return dataContext;
                 });
 
-            // CONSOLE COMMAND HANDLERS   // TODO - make real transient
-            var commandLineHandlers = typeof(ConsoleBookingAppEntry).Assembly.GetTypes()
-                .Where(x => !x.IsAbstract && x.IsClass && x.GetInterface(nameof(ICommandHandler)) == typeof(ICommandHandler));
-            foreach (var commandLineHandler in commandLineHandlers)
-                services.Add(new ServiceDescriptor(typeof(ICommandHandler), commandLineHandler, ServiceLifetime.Transient));
+            // SERVICES
+            services.AddTransient<IRoomAvailabilityService, RoomAvailabilityService>();
+
+
+
 
             services
-                .AddTransient(sp => sp.GetServices<ICommandHandler>().ToDictionary(h => h.DefaultCommandName))
-                .AddSingleton<ConsoleAppInterface>();
-
-            // BOOKING APP DOMAIN
-            services.AddTransient<IRoomAvailabilityService, RoomAvailabilityService>();
+                .AddQuickConsole(ExitApplication, args, new ConsoleConfiguration { UseRunCommandArgsManager = true })
+                .AddQuickOptions(configuration)
+                .AddQuickHandlers()
+                .AddQuickRunCommandArgs(args);
 
             // BUILD & RUN
             var serviceProvider = services.BuildServiceProvider();
 
             // DATA LAYER INITIALIZATION                     
-            var dataContext = serviceProvider.GetRequiredService<IDataContext>();  // TODO check NuGet/HostInitActions for asyncronous initialization
+            var dataContext = serviceProvider.GetRequiredService<IDataContext>();  
+            // TODO check NuGet/HostInitActions for asyncronous initialization
             await dataContext.Initialization;
 
-            // RUN
-            var consoleAppInterface = serviceProvider.GetRequiredService<ConsoleAppInterface>();
-            await consoleAppInterface.RunInterfaceAsync();
+            // Run QuickConsole
+            await serviceProvider.RunQuickConsole();
         }
         catch (Exception ex)
         {
@@ -101,12 +96,9 @@ internal class ConsoleBookingAppEntry
         }
     }
 
+
     public static void ExitApplication(int code)
     {
         Environment.Exit(code);
     }
 }
-
-
-
-

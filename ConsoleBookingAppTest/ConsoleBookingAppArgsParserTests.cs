@@ -1,5 +1,4 @@
-﻿using ConsoleBookingApp;
-using ConsoleBookingApp.CommandHandler;
+﻿using QuickConsole;
 
 namespace ConsoleBookingAppTest;
 

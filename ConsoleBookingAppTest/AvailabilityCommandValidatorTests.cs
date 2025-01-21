@@ -1,5 +1,5 @@
 ﻿//using BookingData.Model;
-//using ConsoleBookingApp.CommandHandler;
+//using ConsoleBookingApp.OldCommandHandler;
 
 //[TestFixture]
 //public class AvailabilityCommandValidatorTests

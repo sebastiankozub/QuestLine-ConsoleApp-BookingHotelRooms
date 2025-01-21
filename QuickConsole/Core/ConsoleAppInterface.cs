@@ -1,12 +1,15 @@
-﻿using ConsoleBookingApp.Configuration;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+using QuickConsole;
+using QuickConsole.Options;
 
-namespace ConsoleBookingApp.UserInterface;
+namespace QuickConsole.Core;
 
-internal class ConsoleAppInterface(CommandLineProcessor processor, IOptions<UserInterfaceOptions> userInterfaceOptions, IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions)
+internal class ConsoleAppInterface(QuickEntryPoint c, CommandLineProcessor processor, IOptions<UserInterfaceOptions> userInterfaceOptions, IOptions<UserInterfaceCommandsOptions> userInterfaceCommandsOptions)
 {
     private readonly CommandLineProcessor _cmdLineProcessor = processor;
     private readonly UserInterfaceOptions _userInterfaceOptions = userInterfaceOptions.Value;
+
+    private readonly QuickEntryPoint _c = c;
 
     private readonly string _helpCommandName = userInterfaceCommandsOptions.Value.Help ?? nameof(UserInterfaceCommandsOptions.Help);
 

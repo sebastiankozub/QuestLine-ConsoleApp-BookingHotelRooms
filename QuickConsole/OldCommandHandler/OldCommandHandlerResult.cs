@@ -1,6 +1,6 @@
-﻿namespace ConsoleBookingApp.CommandHandler;
+﻿namespace QuickConsole.OldCommandHandler;
 
-public class CommandHandlerResult : ICommandHandlerResult
+public class OldCommandHandlerResult : IOldCommandHandlerResult
 {
     public bool Success { get; set; }
     public string? Message { get; set; }
@@ -9,13 +9,13 @@ public class CommandHandlerResult : ICommandHandlerResult
     public Action? PostResultAction { get; set; }
 }
 
-public class AvailabilityCommandHandlerResult : CommandHandlerResult
-{ }
-
-public class SearchCommandHandlerResult : CommandHandlerResult
+public class AvailabilityCommandHandlerResult : OldCommandHandlerResult
 {}
 
-public interface ICommandHandlerResult
+public class SearchCommandHandlerResult : OldCommandHandlerResult
+{}
+
+public interface IOldCommandHandlerResult
 {
     bool Success { get; set; }
     string? Message { get; set; }

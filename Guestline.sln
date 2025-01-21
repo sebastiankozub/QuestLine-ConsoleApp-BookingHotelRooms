@@ -17,12 +17,23 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookingUtils", "BookingUtils\BookingUtils.csproj", "{37047D80-56E7-4A95-876C-1B9DC53DA6F4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookingAppTest", "BookingAppTest\BookingAppTest.csproj", "{B255AC9A-C613-4B69-9FCE-F1EBA1608280}"
+	ProjectSection(ProjectDependencies) = postProject
+		{801B521A-3AB2-402F-A381-F3C8DC6B4C82} = {801B521A-3AB2-402F-A381-F3C8DC6B4C82}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserInterfaceTest", "UserInterfaceTest\UserInterfaceTest.csproj", "{64EADEFC-6B09-4550-91D4-3F720D0D166D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{801B521A-3AB2-402F-A381-F3C8DC6B4C82} = {801B521A-3AB2-402F-A381-F3C8DC6B4C82}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleBookingAppTest", "ConsoleBookingAppTest\ConsoleBookingAppTest.csproj", "{154CDE36-F745-4A0F-A96B-D51F7BFFE268}"
+	ProjectSection(ProjectDependencies) = postProject
+		{801B521A-3AB2-402F-A381-F3C8DC6B4C82} = {801B521A-3AB2-402F-A381-F3C8DC6B4C82}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{097F3CE7-2785-45E8-8284-931C8F81CD0A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickConsole", "QuickConsole\QuickConsole.csproj", "{801B521A-3AB2-402F-A381-F3C8DC6B4C82}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,6 +69,10 @@ Global
 		{154CDE36-F745-4A0F-A96B-D51F7BFFE268}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{154CDE36-F745-4A0F-A96B-D51F7BFFE268}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{154CDE36-F745-4A0F-A96B-D51F7BFFE268}.Release|Any CPU.Build.0 = Release|Any CPU
+		{801B521A-3AB2-402F-A381-F3C8DC6B4C82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{801B521A-3AB2-402F-A381-F3C8DC6B4C82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{801B521A-3AB2-402F-A381-F3C8DC6B4C82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{801B521A-3AB2-402F-A381-F3C8DC6B4C82}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
